@@ -1,0 +1,15 @@
+{
+  "name": "mofe-2026h2",
+  "description": "재정경제부 「2026년 하반기부터 이렇게 달라집니다」 평가 골드셋 (정량 20, 정성 13, 답 없음·함정 10)",
+  "documents": [
+    {
+      "id": "2026년 하반기부터 이렇게 달라집니다.pdf",
+      "sha256": "09fcbfa4c4dbce1a0038f9fafcebecf0576ed55c53a6fa14bd70abb2b7f39c0c"
+    }
+  ],
+  "files": [
+    "quant.jsonl",
+    "qual.jsonl",
+    "neg.jsonl"
+  ]
+}
