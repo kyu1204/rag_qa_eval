@@ -3,6 +3,8 @@
     uv run python -m eval run [--name NAME] [--set KEY=VALUE ...] [--exp NAME] [--repeats N] [--limit N]
     uv run python -m eval compare <run A 디렉터리> <run B 디렉터리>
     uv run python -m eval rescore <run 디렉터리> [--set TAU_FACT=0.25 ...]
+    uv run python -m eval label-sheet <run 디렉터리>
+    uv run python -m eval calibrate <채운 라벨링 시트>
 """
 
 import argparse
@@ -15,7 +17,7 @@ from pathlib import Path
 from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn, TimeElapsedColumn
 
 from app.db import connect
-from eval import judge, report, runner, scoring
+from eval import judge, labels, report, runner, scoring
 from eval.goldset import document_problems, load
 
 
@@ -119,6 +121,20 @@ def cmd_compare(args) -> int:
     return 0
 
 
+def cmd_label_sheet(args) -> int:
+    path = labels.make_sheet(Path(args.run), args.repeat, args.support)
+    report.console.print(f"라벨링 시트: {path}")
+    return 0
+
+
+def cmd_calibrate(args) -> int:
+    result = labels.calibrate(Path(args.sheet))
+    for kind, m in result["kinds"].items():
+        report.console.print(f"{kind}: {m}")
+    report.console.print(f"애매(?)로 제외 {result['skipped_uncertain']}건 · 저장: {Path(args.sheet).with_suffix('.calibration.json')}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m eval", description="RAG 평가 하네스")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -136,8 +152,16 @@ def main(argv: list[str] | None = None) -> int:
     compare.add_argument("a")
     compare.add_argument("b")
     compare.add_argument("--out", help="비교 결과를 Markdown 파일로도 저장")
+    sheet = sub.add_parser("label-sheet", help="사람 라벨링 시트 만들기 (judge 일치도·문턱 보정용)")
+    sheet.add_argument("run")
+    sheet.add_argument("--repeat", type=int, default=0)
+    sheet.add_argument("--support", type=int, default=30, help="문장 근거 표본 수")
+    calib = sub.add_parser("calibrate", help="채운 라벨링 시트로 judge 일치도와 추천 문턱 계산")
+    calib.add_argument("sheet")
     args = parser.parse_args(argv)
-    return {"run": cmd_run, "rescore": cmd_rescore, "compare": cmd_compare}[args.command](args)
+    commands = {"run": cmd_run, "rescore": cmd_rescore, "compare": cmd_compare, "label-sheet": cmd_label_sheet,
+                "calibrate": cmd_calibrate}
+    return commands[args.command](args)
 
 
 if __name__ == "__main__":
