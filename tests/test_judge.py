@@ -57,3 +57,11 @@ def test_judge_record_splits_large_requests(monkeypatch):
     fake = FakeJev()
     out = judge.judge_record(QUAL, ANSWERED, fake, repeats=1)
     assert fake.calls == 3 and len(out["checks"]) == 6  # 판정 6개를 2개씩
+
+
+def test_judge_template_v2_checks_claims_of_absence(monkeypatch):
+    from app.config import settings
+    assert "실제로 없으면" not in judge._question("support", "s0")["instructions"]  # 기본 v1
+    monkeypatch.setattr(settings, "judge_template", "judge-ko-v2")
+    assert "실제로 없으면" in judge._question("support", "s0")["instructions"]
+    assert judge._question("fact", "가")["instructions"] == judge.TEMPLATES["fact"].format(target="가")  # 다른 판정은 그대로
