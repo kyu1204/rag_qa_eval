@@ -11,6 +11,7 @@ from rich.console import Console
 from rich.table import Table
 
 from app.config import settings
+from eval.judge import judge_label
 from eval.scoring import GROUPS
 
 RUNS = Path("eval/runs")
@@ -43,7 +44,7 @@ def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, starte
         "index_chunks": chunks,
         "models": {"embed": settings.embed_model, "llm": settings.llm_model,
                    "llm_reasoning_effort": settings.llm_reasoning_effort, "llm_seed": settings.llm_seed,
-                   "rag_prompt": settings.rag_prompt, "judge": settings.judge_model, "judge_template": settings.judge_template},
+                   "rag_prompt": settings.rag_prompt, "judge": judge_label(), "judge_template": settings.judge_template},
         "repeats": repeats,
         "judge_repeats": settings.judge_repeats,
         "git": _git(),

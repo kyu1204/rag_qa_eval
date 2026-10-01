@@ -3,7 +3,7 @@
     uv run python -m eval run [--name NAME] [--set KEY=VALUE ...] [--exp NAME] [--repeats N] [--limit N]
     uv run python -m eval compare <run A 디렉터리> <run B 디렉터리>
     uv run python -m eval rescore <run 디렉터리> [--set TAU_FACT=0.25 ...]
-    uv run python -m eval rejudge <run 디렉터리> [--set JUDGE_REPEATS=3 ...]
+    uv run python -m eval rejudge <run 디렉터리> [--set JUDGE_REPEATS=3 ...] [--exp llm-judge]
     uv run python -m eval label-sheet <run 디렉터리>
     uv run python -m eval calibrate <채운 라벨링 시트>
     uv run python -m eval generate <문서 ...> --out <새 골드셋 디렉터리> [--quant 10 --qual 5 --traps 5 --out-of-corpus 5]
@@ -95,7 +95,7 @@ def cmd_rejudge(args) -> int:
     """저장된 답변은 그대로 두고 judge만 다시 돌린다 (judge 설정·템플릿·반복 횟수를 바꿨을 때)."""
     src = Path(args.run)
     info, records, _ = _load_run(src)
-    overrides = parse_overrides(args.set, None)
+    overrides = parse_overrides(args.set, args.exp)
     with runner.overridden(info["overrides"] | overrides):
         items_by_id, gold_info = _gold_items(info)
         for record in records:
@@ -105,7 +105,7 @@ def cmd_rejudge(args) -> int:
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rejudged", "rejudged_from": str(src), "rejudge_overrides": overrides,
                        "judge_repeats": runner.settings.judge_repeats, "settings": report.public_settings(), "gold": gold_info,
-                       "models": info["models"] | {"judge": runner.settings.judge_model, "judge_template": runner.settings.judge_template}}
+                       "models": info["models"] | {"judge": judge.judge_label(), "judge_template": runner.settings.judge_template}}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
     return 0
@@ -196,6 +196,7 @@ def main(argv: list[str] | None = None) -> int:
     rejudge = sub.add_parser("rejudge", help="저장된 답변으로 judge만 다시 (답변 고정)")
     rejudge.add_argument("run")
     rejudge.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
+    rejudge.add_argument("--exp", help="eval/experiments/<이름>.toml의 [settings] (예: llm-judge)")
     gen = sub.add_parser("generate", help="문서에서 골드셋 초안 생성 (모든 문항 draft, 사람 검토 후 사용)")
     gen.add_argument("docs", nargs="+", help="문서 파일 (PDF/MD/TXT)")
     gen.add_argument("--out", required=True, help="새 골드셋 디렉터리 (이미 있으면 거부)")

@@ -1,4 +1,5 @@
-"""Jev 판정: 답변 하나 = state 하나, 확인할 판정들을 한 요청에 묶어 병렬로 묻는다.
+"""판정: 답변 하나 = state 하나, 확인할 판정들을 한 요청에 묶어 병렬로 묻는다.
+기본 judge는 Jev(예 확률). JUDGE_BACKEND=llm이면 OpenAI 호환 LLM에 같은 문구를 묻고 투표한다 (LLMJudge).
 
 판정 종류 (모두 문서 무관 템플릿):
 - value     정량: 답이 정답 값을 말하나 (Noul)
@@ -15,6 +16,8 @@ import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
+
+from openai import OpenAI
 
 from app.config import settings
 
@@ -120,7 +123,70 @@ class Jev:
         raise AssertionError("unreachable")
 
 
-def judge_record(item: dict, record: dict, client: Jev, repeats: int) -> dict:
+LLM_PROMPT_VERSION = "llm-vote-v1"
+LLM_PROMPT = """너는 RAG 답변을 채점하는 judge다. 아래 [자료]의 question, answer, sources, sentences를 읽고 [판정]마다 답하라.
+- type이 noul인 판정은 instructions의 물음에 "예" 또는 "아니오"로 답한다.
+- type이 choice인 판정은 criteria의 키("2", "1", "0") 중 answer에 가장 잘 맞는 하나로 답한다.
+JSON 객체 하나만 출력한다: {{"<판정 id>": "<답>", ...}}
+
+[자료]
+{state}
+
+[판정]
+{questions}"""
+
+
+class LLMJudge:
+    """Jev 키 없이 평가를 재현하기 위한 judge: OpenAI 호환 LLM에 Jev와 같은 판정 문구를 묻는다.
+    토큰 확률을 주지 않는 모델이 많아 호출마다 예/아니오 하나(1/0)를 받고, judge_repeats번 반복한 평균
+    (= 찬성 표 비율)을 확률로 쓴다. 문턱 0.5 = 다수결. 사람 라벨과의 일치도: eval/poc/llm_judge_result.json"""
+
+    def __init__(self):
+        if not (settings.judge_llm_base_url and settings.judge_llm_model):
+            raise RuntimeError("JUDGE_LLM_BASE_URL과 JUDGE_LLM_MODEL이 필요하다 (.env, --exp llm-judge)")
+        self.api = OpenAI(base_url=settings.judge_llm_base_url, api_key=settings.elice_api_key)
+
+    def ask(self, state: dict, questions: dict) -> tuple[dict, int]:
+        """(answers, tokens). 판정이 빠졌거나 형식이 어긋난 응답은 두 번까지 다시 묻는다."""
+        listed = [{"id": cid, **q} for cid, q in questions.items()]
+        content = LLM_PROMPT.format(state=json.dumps(state, ensure_ascii=False), questions=json.dumps(listed, ensure_ascii=False))
+        tokens = 0
+        for attempt in range(3):
+            resp = self.api.chat.completions.create(model=settings.judge_llm_model, response_format={"type": "json_object"},
+                                                    messages=[{"role": "user", "content": content}])
+            tokens += resp.usage.prompt_tokens + resp.usage.completion_tokens
+            text = resp.choices[0].message.content
+            try:
+                reply = json.loads(text)
+                return {cid: _vote(q, reply[cid]) for cid, q in questions.items()}, tokens
+            except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+                if attempt == 2:
+                    raise RuntimeError(f"judge LLM 응답 형식 오류: {text[:200]}") from None
+        raise AssertionError("unreachable")
+
+
+def _vote(question: dict, answer) -> dict:
+    """LLM의 답 하나를 Jev 응답 형식으로: 예/아니오 -> noul 1/0, 기준 번호 -> 그 기준의 확률 1."""
+    text = str(answer).strip().lower()
+    if question["type"] == "choice":
+        if text not in question["criteria"]:
+            raise ValueError(text)
+        return {"probabilities": {k: float(k == text) for k in question["criteria"]}}
+    if text in ("예", "yes", "true"):
+        return {"noul": 1.0}
+    if text in ("아니오", "아니요", "no", "false"):
+        return {"noul": 0.0}
+    raise ValueError(text)
+
+
+def judge_label() -> str:
+    """실행 기록에 남기는 judge 이름."""
+    if settings.judge_backend == "jev":
+        return settings.judge_model
+    return f"{settings.judge_llm_model} ({LLM_PROMPT_VERSION}, {settings.judge_repeats}표 다수결)"
+
+
+def judge_record(item: dict, record: dict, client: Jev | LLMJudge, repeats: int) -> dict:
     """판정 결과: {판정 id: {"kind", "target", "p", "ps"}} (grade는 "choice", "probabilities", "choices").
     p는 반복 평균, ps·choices는 회차별 원값 (judge 일관성 측정용)."""
     state, checks = build_checks(item, record)
@@ -151,7 +217,7 @@ def judge_record(item: dict, record: dict, client: Jev, repeats: int) -> dict:
 
 def judge_all(items_by_id: dict[str, dict], records: list[dict], repeats: int | None = None, workers: int = 8) -> None:
     """records에 judge 결과를 채워 넣는다."""
-    client = Jev()
+    client = Jev() if settings.judge_backend == "jev" else LLMJudge()
     repeats = repeats or settings.judge_repeats
     with ThreadPoolExecutor(max_workers=workers) as pool:
         results = pool.map(lambda r: judge_record(items_by_id[r["id"]], r, client, repeats), records)

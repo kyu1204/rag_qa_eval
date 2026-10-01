@@ -1,6 +1,9 @@
-"""eval.judge 테스트: 문장 분리, 판정 구성, 반복 평균. Jev는 가짜 클라이언트로 바꾼다."""
+"""eval.judge 테스트: 문장 분리, 판정 구성, 반복 평균, LLM judge 투표. API는 가짜 클라이언트로 바꾼다."""
 
-from eval import judge
+from types import SimpleNamespace
+
+from eval import __main__ as cli
+from eval import judge, runner
 
 QUAL = {"id": "s1", "type": "qual", "question": "정리해줘",
         "must_include": [{"facts": ["가", "나"]}, {"facts": ["다"]}],
@@ -57,6 +60,30 @@ def test_judge_record_splits_large_requests(monkeypatch):
     fake = FakeJev()
     out = judge.judge_record(QUAL, ANSWERED, fake, repeats=1)
     assert fake.calls == 3 and len(out["checks"]) == 6  # 판정 6개를 2개씩
+
+
+class FakeChat:
+    """OpenAI 클라이언트 흉내: 정해 둔 응답 문자열을 차례로 돌려준다."""
+
+    def __init__(self, *replies):
+        self.replies = list(replies)
+        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self.create))
+
+    def create(self, **kwargs):
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=self.replies.pop(0)))],
+                               usage=SimpleNamespace(prompt_tokens=90, completion_tokens=10))
+
+
+def test_llm_judge_turns_votes_into_probabilities():
+    with runner.overridden(cli.parse_overrides([], "llm-judge")):  # 실제 실험 파일이 설정으로 읽히는지도 확인
+        assert judge.judge_label().startswith("gemini-3.5-flash-lite")
+        client = judge.LLMJudge()
+        client.api = FakeChat('{"s0": "예"}',  # 판정이 빠진 응답 -> 다시 묻는다
+                              '{"s0": "예", "s1": "아니오", "grade": "2"}',
+                              '{"s0": "아니오", "s1": "아니오", "grade": "1"}')
+        out = judge.judge_record(NEG, ANSWERED, client, repeats=2)
+    assert out["checks"]["s0"]["p"] == 0.5 and out["checks"]["s1"]["ps"] == [0.0, 0.0]  # 찬성 표 비율
+    assert out["checks"]["grade"]["choices"] == ["2", "1"] and out["judge_tokens"] == 300
 
 
 def test_judge_template_v2_checks_claims_of_absence(monkeypatch):

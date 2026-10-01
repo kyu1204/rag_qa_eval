@@ -34,7 +34,11 @@ class Settings(BaseSettings):
     judge_endpoint: str = "https://api.typesafe.ai/v1/systemone"
     judge_model: str = "jev-1.13.0"
     judge_template: Literal["judge-ko-v1", "judge-ko-v2"] = "judge-ko-v1"  # 판정 문구 버전 (eval/judge.py TEMPLATE_SETS)
-    judge_repeats: int = 2  # 같은 판정을 반복해 확률 평균 (PoC 흔들림 최대 0.09)
+    judge_repeats: int = 2  # 같은 판정을 반복해 확률 평균 (PoC 흔들림 최대 0.09). llm judge에서는 투표 수
+    judge_backend: Literal["jev", "llm"] = "jev"  # llm = OpenAI 호환 LLM에 같은 판정을 묻고 투표 (eval/experiments/llm-judge.toml)
+    judge_llm_base_url: str = ""  # llm judge 엔드포인트, 키는 ELICE_API_KEY
+    judge_llm_model: str = ""
+    judge_price_usd: float = 0.042  # 판정 토큰 100만 개당 달러 (기본은 Jev 입력 단가)
     tau_value: float = 0.5  # 정량 값 판정 문턱
     tau_fact: float = 0.8  # 정성 사실 포함 문턱. 사람 라벨 85건: 0.3이면 81%(judge가 일부만 있는 사실도 예), 0.75~0.85면 94%
     tau_must_not: float = 0.7  # 사람 라벨 14건 모두 위반 없음, 0.5면 오탐 2건. 실제 위반 표본이 없어 놓침은 미측정

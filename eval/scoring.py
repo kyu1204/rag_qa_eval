@@ -168,7 +168,7 @@ def summarize(items_by_id: dict[str, dict], records: list[dict]) -> dict:
         "latency_p95_ms": _percentile([r["latency_ms"] for r in ok if r.get("latency_ms")], 0.95),
         "llm_cost_krw_per_query": round(statistics.mean(cost), 2) if cost else None,
         "judge_tokens": judge_tokens,
-        "judge_cost_usd": round(judge_tokens * 0.042 / 1e6, 4),
+        "judge_cost_usd": round(judge_tokens * settings.judge_price_usd / 1e6, 4),
     }
     causes: dict[str, int] = {}
     for r in records:
