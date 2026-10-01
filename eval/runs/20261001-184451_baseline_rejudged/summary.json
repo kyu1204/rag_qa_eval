@@ -1,0 +1,134 @@
+{
+  "repeats": 3,
+  "groups": {
+    "정량": {
+      "n": 60,
+      "errors": 0,
+      "safety": 1.0,
+      "usefulness": 0.9583,
+      "dist": {
+        "0": 0,
+        "1": 5,
+        "2": 55
+      },
+      "safety_range": [
+        1.0,
+        1.0
+      ],
+      "usefulness_range": [
+        0.95,
+        0.975
+      ]
+    },
+    "정성": {
+      "n": 39,
+      "errors": 0,
+      "safety": 1.0,
+      "usefulness": 0.6154,
+      "dist": {
+        "0": 0,
+        "1": 30,
+        "2": 9
+      },
+      "safety_range": [
+        1.0,
+        1.0
+      ],
+      "usefulness_range": [
+        0.6154,
+        0.6154
+      ]
+    },
+    "답 없음·함정": {
+      "n": 30,
+      "errors": 0,
+      "safety": 1.0,
+      "usefulness": 0.9,
+      "dist": {
+        "0": 0,
+        "1": 6,
+        "2": 24
+      },
+      "safety_range": [
+        1.0,
+        1.0
+      ],
+      "usefulness_range": [
+        0.85,
+        0.95
+      ]
+    },
+    "전체": {
+      "n": 129,
+      "errors": 0,
+      "safety": 1.0,
+      "usefulness": 0.8411,
+      "dist": {
+        "0": 0,
+        "1": 41,
+        "2": 88
+      },
+      "safety_range": [
+        1.0,
+        1.0
+      ],
+      "usefulness_range": [
+        0.8372,
+        0.8488
+      ]
+    }
+  },
+  "diagnostics": {
+    "retrieval_hit_at_k": 0.9474,
+    "mrr": 0.9342,
+    "quant_accuracy": 0.9167,
+    "quant_citation_accuracy": 1.0,
+    "qual_fact_coverage": 0.7253,
+    "qual_fact_coverage_soft": 0.636,
+    "faithfulness": 1.0,
+    "abstention_accuracy": 1.0,
+    "false_refusal_rate": 0.2432,
+    "latency_p50_ms": 1930,
+    "latency_p95_ms": 5278,
+    "llm_cost_krw_per_query": 0.99,
+    "judge_tokens": 1020567,
+    "judge_cost_usd": 0.0429
+  },
+  "causes": {
+    "오거절": 27,
+    "검색 실패": 8,
+    "생성 누락": 6
+  },
+  "judge_consistency": {
+    "support": {
+      "n": 216,
+      "flip_rate": 0.0046,
+      "mean_diff": 0.0087,
+      "max_diff": 0.11
+    },
+    "value": {
+      "n": 55,
+      "flip_rate": 0.0,
+      "mean_diff": 0.008,
+      "max_diff": 0.09
+    },
+    "fact": {
+      "n": 255,
+      "flip_rate": 0.0,
+      "mean_diff": 0.0129,
+      "max_diff": 0.19
+    },
+    "must_not": {
+      "n": 46,
+      "flip_rate": 0.0,
+      "mean_diff": 0.0398,
+      "max_diff": 0.1
+    },
+    "grade": {
+      "n": 6,
+      "flip_rate": 0.0,
+      "mean_diff": null,
+      "max_diff": null
+    }
+  }
+}
