@@ -1,0 +1,7 @@
+# Part C 실험 5 변형: combined.toml에 top_k만 5 -> 30.
+# 실험 2에서 유용성이 오른 유일한 값이 k30이었다(정성 완성도 상승, 대신 함정 문항이 흔들림). v3가 그 흔들림을 막는지 본다.
+[settings]
+llm_reasoning_effort = "medium"
+rag_prompt = "v3"
+judge_template = "judge-ko-v2"
+top_k = 30
