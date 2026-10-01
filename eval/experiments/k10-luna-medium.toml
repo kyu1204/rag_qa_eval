@@ -1,0 +1,6 @@
+# Part C 실험 2 가설: 검색 실패는 알맞은 청크가 top-k 안에 들지 못해서 생긴다. top-k를 늘리면 검색 실패가 점진적으로 줄 것이다.
+# 실험 1에서 비용과 효과가 가장 좋았던 B(Luna, 추론 medium, 온도는 API 기본값 1)에 top_k만 5 -> 10.
+# 검색만 잰 곡선: eval/runs/20261002-015935_retrieval (정성 근거 재현율 k=5 67.4%, 10 73.9%, 15·20 80.4%, 30 82.6%)
+[settings]
+llm_reasoning_effort = "medium"
+top_k = 10
