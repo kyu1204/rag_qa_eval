@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>정책 변화 안내 RAG QA</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1d2330; --muted: #6b7280; --line: #e3e6eb;
+    --accent: #2457d6; --accent-soft: #e8eefc; --warn: #b45309; --warn-soft: #fef3e2; --ok: #15803d;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111418; --card: #1a1f26; --text: #e6e9ee; --muted: #9aa3af; --line: #2b323c;
+            --accent: #7aa2ff; --accent-soft: #1e2a44; --warn: #f0b35a; --warn-soft: #3a2c16; --ok: #4ade80; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+         font: 15px/1.65 -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+  main { max-width: 820px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  form { display: flex; gap: 8px; }
+  input[type=text] { flex: 1; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
+                     background: var(--card); color: var(--text); font: inherit; }
+  input[type=text]:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  button { padding: 0 18px; border: 0; border-radius: 10px; background: var(--accent); color: #fff; font: inherit; cursor: pointer; }
+  button:disabled { opacity: .5; cursor: default; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 24px; }
+  .chip { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+          border: 0; cursor: pointer; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .status { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; margin-bottom: 8px; }
+  .status.ok { color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, transparent); }
+  .status.no { color: var(--warn); background: var(--warn-soft); }
+  .status.wait { color: var(--muted); background: var(--bg); }
+  #answer { white-space: pre-wrap; }
+  #answer sup a { color: var(--accent); text-decoration: none; font-weight: 600; padding: 0 1px; }
+  .warn { color: var(--warn); font-size: 13px; margin-top: 8px; }
+  h2 { font-size: 14px; color: var(--muted); font-weight: 600; margin: 22px 0 8px; }
+  .src { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; background: var(--card); }
+  .src.cited { border-color: var(--accent); }
+  .src .head { display: flex; gap: 8px; align-items: baseline; font-size: 13px; }
+  .src .ref { font-weight: 700; color: var(--accent); }
+  .src .label { flex: 1; }
+  .src .score { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .src .snippet { color: var(--muted); font-size: 13px; margin-top: 4px; white-space: pre-wrap; display: none; }
+  .src.open .snippet { display: block; }
+  .meta { color: var(--muted); font-size: 12px; margin-top: 12px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>정책 변화 안내 RAG QA</h1>
+  <div class="sub">「2026년 하반기부터 이렇게 달라집니다」(재정경제부) 문서 근거로 답합니다. 문서에 없는 내용은 답하지 않습니다.</div>
+
+  <form id="form">
+    <input id="q" type="text" placeholder="질문을 입력하세요" autocomplete="off" autofocus>
+    <button id="go" type="submit">질문</button>
+  </form>
+  <div class="chips">
+    <button class="chip" type="button">노란우산공제 납입한도가 얼마로 늘어나나요?</button>
+    <button class="chip" type="button">단기 육아휴직은 언제부터 쓸 수 있나요?</button>
+    <button class="chip" type="button">청년이 받을 수 있는 문화예술 지원은?</button>
+    <button class="chip" type="button">2027년 최저임금은 얼마인가요?</button>
+  </div>
+
+  <section id="result" hidden>
+    <div class="card">
+      <span id="status" class="status wait">검색 중</span>
+      <div id="answer"></div>
+      <div id="warnings" class="warn"></div>
+      <div id="meta" class="meta"></div>
+    </div>
+    <h2>검색된 출처</h2>
+    <div id="sources"></div>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const form = $("form"), q = $("q"), go = $("go");
+
+document.querySelectorAll(".chip").forEach((c) => c.addEventListener("click", () => { q.value = c.textContent; form.requestSubmit(); }));
+
+function escapeHtml(s) { return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+function renderAnswer(text) {
+  $("answer").innerHTML = escapeHtml(text).replace(/\[(\d+)\]/g, '<sup><a href="#src-$1" data-ref="$1">[$1]</a></sup>');
+}
+function setStatus(kind, label) { const s = $("status"); s.className = "status " + kind; s.textContent = label; }
+
+function renderSources(sources) {
+  $("sources").innerHTML = sources.map((s) => `
+    <div class="src" id="src-${s.ref}">
+      <div class="head"><span class="ref">[${s.ref}]</span><span class="label">${escapeHtml(s.label)}</span>
+      <span class="score">${s.score.toFixed(3)}</span></div>
+      <div class="snippet"></div>
+    </div>`).join("");
+  document.querySelectorAll(".src").forEach((el) => el.addEventListener("click", () => el.classList.toggle("open")));
+}
+
+function finish(done) {
+  if (done.status === "answered") {
+    setStatus("ok", "답변");
+    renderAnswer(done.answer);
+  } else {
+    setStatus("no", "정보 불충분");
+    $("answer").textContent = "제공된 문서에서 이 질문에 대한 근거를 찾지 못했습니다.";
+  }
+  for (const c of done.citations) {
+    const el = $("src-" + c.ref);
+    if (!el) continue;
+    el.classList.add("cited");
+    el.querySelector(".snippet").textContent = c.snippet + (c.snippet.length >= 200 ? " …" : "");
+  }
+  $("warnings").textContent = done.warnings.join(" · ");
+  const m = done.meta, u = m.usage || {};
+  $("meta").textContent = [`${m.latency_ms} ms`, u.prompt_tokens ? `토큰 ${u.prompt_tokens} → ${u.completion_tokens}` : null,
+    `${m.llm_model}`, `index ${m.index_version}`, `top score ${m.top_score}`].filter(Boolean).join(" · ");
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const question = q.value.trim();
+  if (!question) return;
+  go.disabled = true;
+  $("result").hidden = false;
+  setStatus("wait", "검색 중");
+  $("answer").textContent = ""; $("warnings").textContent = ""; $("meta").textContent = ""; $("sources").innerHTML = "";
+
+  let text = "";
+  try {
+    const res = await fetch("/query", { method: "POST", headers: { "content-type": "application/json" },
+                                        body: JSON.stringify({ question, stream: true }) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+    const reader = res.body.getReader(), decoder = new TextDecoder();
+    let buf = "";
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {   // SSE 이벤트 단위로 자른다
+        const block = buf.slice(0, i); buf = buf.slice(i + 2);
+        const event = block.match(/^event: (.*)$/m)?.[1];
+        const data = JSON.parse(block.match(/^data: (.*)$/m)?.[1] ?? "null");
+        if (event === "sources") { renderSources(data); setStatus("wait", "답변 생성 중"); }
+        else if (event === "delta") { text += data; renderAnswer(text); }
+        else if (event === "done") finish(data);
+      }
+    }
+  } catch (err) {
+    setStatus("no", "오류");
+    $("answer").textContent = String(err);
+  } finally {
+    go.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
