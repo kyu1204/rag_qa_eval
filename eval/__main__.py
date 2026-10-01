@@ -6,6 +6,7 @@
     uv run python -m eval rejudge <run 디렉터리> [--set JUDGE_REPEATS=3 ...]
     uv run python -m eval label-sheet <run 디렉터리>
     uv run python -m eval calibrate <채운 라벨링 시트>
+    uv run python -m eval generate <문서 ...> --out <새 골드셋 디렉터리> [--quant 10 --qual 5 --traps 5 --out-of-corpus 5]
 """
 
 import argparse
@@ -18,7 +19,7 @@ from pathlib import Path
 from rich.progress import BarColumn, MofNCompleteColumn, Progress, TextColumn, TimeElapsedColumn
 
 from app.db import connect
-from eval import judge, labels, report, runner, scoring
+from eval import generate, judge, labels, report, runner, scoring
 from eval.goldset import document_problems, load
 
 
@@ -109,6 +110,15 @@ def cmd_rejudge(args) -> int:
     return 0
 
 
+def cmd_generate(args) -> int:
+    build = generate.generate(args.docs, Path(args.out), name=args.name, n_quant=args.quant, n_qual=args.qual,
+                              n_traps=args.traps, n_out=args.out_of_corpus, seed=args.seed)
+    counts = build["counts"]
+    report.console.print(f"초안 정량 {counts['quant']} · 정성 {counts['qual']} · 답 없음·함정 {counts['neg']} (탈락 {len(build['rejects'])}건)"
+                         f" -> {args.out}/review.md 를 검토하고 쓸 문항을 approved로 바꾼다")
+    return 0
+
+
 def _item_scores(records: list[dict]) -> dict[str, float]:
     """문항별 평균 점수 (반복 실행 평균, 오류 제외)."""
     acc: dict[str, list[int]] = {}
@@ -185,11 +195,20 @@ def main(argv: list[str] | None = None) -> int:
     rejudge = sub.add_parser("rejudge", help="저장된 답변으로 judge만 다시 (답변 고정)")
     rejudge.add_argument("run")
     rejudge.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
+    gen = sub.add_parser("generate", help="문서에서 골드셋 초안 생성 (모든 문항 draft, 사람 검토 후 사용)")
+    gen.add_argument("docs", nargs="+", help="문서 파일 (PDF/MD/TXT)")
+    gen.add_argument("--out", required=True, help="새 골드셋 디렉터리 (이미 있으면 거부)")
+    gen.add_argument("--name", help="골드셋 이름 (기본: 디렉터리 이름)")
+    gen.add_argument("--quant", type=int, default=10, help="정량 사실 수 (문항은 literal·user 2배)")
+    gen.add_argument("--qual", type=int, default=5)
+    gen.add_argument("--traps", type=int, default=5, help="잘못된 전제 문항 수")
+    gen.add_argument("--out-of-corpus", type=int, default=5)
+    gen.add_argument("--seed", type=int, default=7)
     calib = sub.add_parser("calibrate", help="채운 라벨링 시트로 judge 일치도와 추천 문턱 계산")
     calib.add_argument("sheet")
     args = parser.parse_args(argv)
     commands = {"run": cmd_run, "rescore": cmd_rescore, "compare": cmd_compare, "label-sheet": cmd_label_sheet,
-                "calibrate": cmd_calibrate, "rejudge": cmd_rejudge}
+                "calibrate": cmd_calibrate, "rejudge": cmd_rejudge, "generate": cmd_generate}
     return commands[args.command](args)
 
 
