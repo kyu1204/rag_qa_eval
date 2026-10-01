@@ -1,8 +1,8 @@
-"""원본 파일 -> 정제된 정책 쪽 목록.
+"""원본 파일 -> Page 목록.
 
-PDF 규칙은 「2026년 하반기부터 이렇게 달라집니다」 실측값에 맞춘 것이다 (README 참조).
-상세 정책 쪽("추진배경"이 있는 쪽)만 적재 대상이고, 요약 카드·목차·부록 표는 같은 정책의
-재구성이라 건너뛴다.
+- generic (기본): 어떤 PDF/MD/TXT든 쪽 텍스트를 그대로 뽑고 범용 정제만 한다.
+- policy_book (선택 분석기): 「2026년 하반기부터 이렇게 달라집니다」 템플릿 실측값에 맞춘 규칙.
+  상세 정책 쪽("추진배경"이 있는 쪽)만 남기고 요약 카드·목차·부록 표는 건너뛴다.
 """
 
 import re
@@ -93,6 +93,26 @@ def join_lines(lines: list[tuple[str, float]]) -> str:
     return out
 
 
+def extract_generic(data: bytes, kind: str) -> list[Page]:
+    """범용 추출: PDF는 쪽마다 텍스트, MD/TXT는 문서 전체를 한 덩어리로."""
+    if kind == "text":
+        return [Page(None, clean(data.decode("utf-8-sig")))]
+    doc = pymupdf.open(stream=data, filetype="pdf")
+    pages = (Page(page.number + 1, clean(page.get_text())) for page in doc)
+    return [p for p in pages if p.text]
+
+
+def extract(data: bytes, name: str, extractor: str) -> list[Page]:
+    kind = sniff(data, name)
+    if kind is None:
+        raise ValueError(f"{name}: 지원하지 않는 형식")
+    if extractor == "policy_book":
+        if kind != "pdf":
+            raise ValueError(f"{name}: policy_book 분석기는 PDF 전용")
+        return extract_policy_book(data)
+    return extract_generic(data, kind)
+
+
 def _page_lines(page: pymupdf.Page) -> list[tuple[float, float, list[tuple[str, float]]]]:
     """블록 단위 (y0, 폰트 크기, [(줄 텍스트, 줄 y0)]). 가로쓰기만."""
     blocks = []
@@ -152,7 +172,8 @@ def _meta(text: str) -> dict:
 
 
 if __name__ == "__main__":
+    # python -m app.extract <파일> [generic|policy_book]
     path = Path(sys.argv[1])
-    for p in extract_policy_book(path.read_bytes()):
+    for p in extract(path.read_bytes(), path.name, sys.argv[2] if len(sys.argv) > 2 else "generic"):
         print(f"\n===== PDF p.{p.page} | {p.meta}")
         print(p.text)
