@@ -57,3 +57,9 @@ def test_low_retrieval_score_skips_llm(monkeypatch):
     events = _events(monkeypatch, ["호출되면 안 됨"], _hits(score=0.3))
     assert [k for k, _ in events] == ["sources", "done"]
     assert events[-1][1].warnings == ["검색 점수 미달"]
+
+
+def test_temperature_only_sent_without_reasoning(monkeypatch):
+    monkeypatch.setattr(settings, "llm_reasoning_effort", "none")
+    assert rag.sampling_params()["temperature"] == settings.llm_temperature
+    assert "temperature" not in rag.sampling_params("low")  # Luna는 low 이상에서 temperature=0을 거부한다
