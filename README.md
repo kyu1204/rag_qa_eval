@@ -27,7 +27,7 @@
 
 - Python 3.13, [uv](https://docs.astral.sh/uv/), Docker
 - Elice ML API 키와 모델별 엔드포인트 2개 (임베딩, 생성)
-- TypeSafe Jev API 키 (평가 judge, 평가를 돌릴 때만 필요)
+- 평가 judge: TypeSafe Jev API 키 (기본). 없으면 Elice의 Gemini 3.5 Flash-Lite 엔드포인트로 대신 판정할 수 있습니다 (`--exp llm-judge`, 6.3절)
 
 ### 순서
 
@@ -49,6 +49,7 @@ uv run uvicorn app.api:app
 uv run python -m eval run --name my-run --repeats 3
 #   결과: eval/runs/<시각>_my-run/report.md (요약 리포트), summary.json, items.jsonl, run.json
 uv run python -m eval compare eval/runs/20261001-203228_baseline_rejudged eval/runs/<새 실행>
+#   Jev 키가 없으면: uv run python -m eval run --exp llm-judge --repeats 3  (judge = Gemini 3.5 Flash-Lite, Elice 키만 필요)
 
 # 테스트 (tests/test_ingest.py는 DB가 떠 있어야 한다)
 uv run pytest
@@ -66,7 +67,8 @@ uv run pytest
 | `LLM_BASE_URL`, `LLM_MODEL`, `LLM_REASONING_EFFORT` | 필수 | 생성 엔드포인트, `gpt-5.6-luna`, `none` |
 | `TOP_K`, `MIN_SCORE` | | 검색 개수(기본 5), 응답 불가 게이트 1의 점수 문턱(기본 0.0) |
 | `EXTRACTOR`, `CHUNK_STRATEGY`, `CHUNK_TOKENS`, `CHUNK_OVERLAP` | | 기준선 `generic`, `split`, 500, 75 |
-| `TYPESAFE_API_KEY`, `JUDGE_MODEL` | 평가 시 | Jev 키, `jev-1.13.0` |
+| `TYPESAFE_API_KEY`, `JUDGE_MODEL` | 평가 시 | Jev 키, `jev-1.13.0` (기본 judge) |
+| `JUDGE_LLM_BASE_URL` | Jev 키가 없을 때 | 대안 judge 엔드포인트 (Elice의 Gemini 3.5 Flash-Lite). 모델·투표 수·문턱은 `eval/experiments/llm-judge.toml` |
 
 키는 `.env`(git 무시)에만 두고 코드에 넣지 않습니다. 평가 문턱(`TAU_*`) 등 나머지 조절값은 `app/config.py` 한 곳에 모여 있고, 모두 환경 변수나 `--set KEY=VALUE`로 덮어쓸 수 있습니다.
 
@@ -96,7 +98,7 @@ uv run pytest
 | 토큰 계산 | tiktoken (o200k_base) | 청크 길이를 토큰 단위로 맞춤 |
 | 임베딩 | text-embedding-3-small (1536차원) | 한국어 검색에 충분하고 large보다 저렴. 문서 하나 규모라 차원·비용을 늘릴 이유가 작음 |
 | 생성 | GPT-5.6 Luna (reasoning effort none) | 입력 ₩304, 출력 ₩1,827 (100만 토큰당)으로 저렴. 실측 질의당 약 ₩1.0. 크레딧(5만원) 안에서 반복 실험 가능 |
-| Judge | TypeSafe Jev `jev-1.13.0` | 판정 전용 모델로, 예/아니오의 확률을 돌려줘 문턱을 사람 라벨로 보정할 수 있음. 입력 100만 토큰당 $0.042로 평가 1회 약 $0.03 |
+| Judge | TypeSafe Jev `jev-1.13.0` (기본), Gemini 3.5 Flash-Lite (대안) | Jev는 판정 전용 모델로, 예/아니오의 확률을 돌려줘 문턱을 사람 라벨로 보정할 수 있음. 입력 100만 토큰당 $0.042로 평가 1회 약 $0.03. Gemini는 Jev 키 없이 Elice 키만으로 평가를 재현하기 위한 대안이고, 생성 모델(GPT 계열)과 계열이 달라 자기 답을 후하게 채점하는 편향을 피함 |
 | API | FastAPI + SSE | 요청·응답 스키마를 Pydantic으로 정의하고 OpenAPI 문서가 자동으로 생김 |
 | LLM 호출 | openai SDK (Elice ML API는 OpenAI 호환) | 엔드포인트만 바꿔 다른 OpenAI 호환 모델로 교체 가능 |
 
@@ -293,7 +295,26 @@ judge 하나에 "이 답변이 좋은가"를 묻지 않습니다. 문항마다 �
 - 문턱을 정한 답변과 점수를 보고한 답변이 같습니다. 교차검증으로 일부만 보완했습니다.
 - 표본에 실제 must_not 위반과 근거 없는 문장이 거의 없습니다. judge가 이런 경우를 놓치는 비율(재현율)은 측정하지 못했습니다.
 - 숫자 하나가 빠진 사실에도 judge가 0.95 이상을 주는 사례가 있습니다. 이 문제는 문턱으로 고칠 수 없습니다.
-- 평가에 TypeSafe Jev API 키가 필요합니다 (8절).
+
+**judge를 바꿔도 같은 결론이 나오는가 (Gemini 3.5 Flash-Lite 대안 judge)**
+- Jev 키 없이 평가를 재현할 수 있도록, OpenAI 호환 LLM에 같은 판정 문구를 묻는 judge를 추가했습니다 (`JUDGE_BACKEND=llm`, 설정 묶음은 `eval/experiments/llm-judge.toml`).
+  - 이 엔드포인트는 토큰 확률(logprobs)을 주지 않습니다. 그래서 판정마다 3번 묻고 '예' 비율을 확률로 쓰며, 문턱은 0.5(다수결)입니다.
+- **사람 라벨과의 일치도** (같은 149건, PoC 2회 실행, `eval/poc/llm_judge_result.json`). Gemini는 문턱을 이 라벨로 정하지 않았기 때문에, 같은 데이터로 맞춘 낙관 편향이 없습니다.
+
+| 판정 | Gemini (다수결, 보정 없음) | Jev (보정 후) |
+|---|---|---|
+| 사실 | 89.4~91.8% | 94.1~95.3% |
+| must_not | 100% | 100% |
+| 정답 값 | 94.1~100% | 94.1% |
+| 문장 근거 | 96.7% | 100% |
+| 기준 | 100% | 100% |
+
+- **기준선 전체를 Gemini로 다시 판정한 결과** (`eval/runs/20261001-230527_baseline_rejudged/`): 전체 유용성 79.1%(Jev 81.8%), 정성 55.1%(53.8%), 답 없음·함정 90.0%(90.0%)입니다. 실패 원인도 오거절 27건이 가장 많고 검색 실패가 그다음이라, 기준선의 결론은 judge를 바꿔도 같습니다.
+- **차이와 주의점:**
+  - Gemini는 표현을 바꾼 같은 값을 다른 값으로 보는 경향이 있습니다. 예를 들어 「2차례까지 시정명령」을 정답 「1,2차 시정명령」과 다르다고 판정했습니다. 그래서 맞는 정량 답 4개를 환각(0점)으로 쳐서 안전성이 96.9%로 나옵니다(Jev 100%).
+  - Gemini는 투표가 갈리는 판정이 3~4%이고, 실행마다 일치도가 1~2%p 달라집니다(Jev는 뒤집힘 1% 안팎).
+  - 숫자가 빠진 사실을 '포함'으로 보는 약점은 두 judge에 공통입니다.
+  - 그래서 기준 측정은 Jev로 하고, Gemini는 키 없이 재현해 확인하는 용도로 둡니다.
 
 ### 6.4 자동화와 재현성
 
@@ -354,7 +375,7 @@ judge 하나에 "이 답변이 좋은가"를 묻지 않습니다. 문항마다 �
 | 응답 불가 2단계 게이트 + 인용 검증 | 정책 정보에서 환각을 우선 막음 | 과잉 거절 (오거절률 24.3%) |
 | 0/1/2 차등 점수 | '틀린 답'과 '안전하지만 불완전한 답'을 구분 | 점수 규칙이 복잡해짐 |
 | 정성 루브릭을 사실 단위로 분해 | judge 판정의 애매함을 줄임 (PoC 근거) | 분해 품질에 의존해 사람 검토가 필요 |
-| 판정 전용 judge(Jev) + 사람 라벨 보정 | 확률 출력이라 문턱을 데이터로 정할 수 있고 저렴함 | 외부 API 키 의존, 보정 표본이 작음 |
+| 판정 전용 judge(Jev) + 사람 라벨 보정 | 확률 출력이라 문턱을 데이터로 정할 수 있고 저렴함 | 외부 API 키 의존(Gemini 대안 judge로 완화), 보정 표본이 작음 |
 | 반복 실행과 범위 보고 | 생성 비결정성 때문에 1회 결과는 잡음이 큼 | 비용·시간 3배 (그래도 1회 약 ₩130, 1분) |
 | 보정 후 하네스 고정 | 결과를 보며 측정 기준을 바꾸는 '끼워 맞추기' 방지 | 개선 실험 중 발견한 judge 문제는 다음 버전으로 미룸 |
 
@@ -363,7 +384,7 @@ judge 하나에 "이 답변이 좋은가"를 묻지 않습니다. 문항마다 �
 ## 8. 한계, 알려진 이슈, 향후 과제
 
 **한계와 알려진 이슈**
-- **평가 재현에 Jev 키가 필요합니다.** judge가 TypeSafe Jev API에 묶여 있어 키 없이는 평가를 다시 돌릴 수 없습니다. 저장된 판정으로 다시 채점하는 `rescore`와 저장된 결과 확인은 키 없이 가능합니다.
+- **judge에 따라 숫자가 조금 달라집니다.** 기준 측정은 TypeSafe Jev로 했습니다. Jev 키가 없으면 Gemini judge(`--exp llm-judge`)로 재현할 수 있지만, Gemini는 표현을 바꾼 정답을 틀렸다고 보는 경향이 있어 안전성을 낮게 잽니다 (6.3절).
 - **코퍼스가 문서 하나**(428쪽, 한 분야)입니다. 여러 문서가 섞일 때의 검색 혼동은 측정하지 못했습니다.
 - **과잉 거절:** 오거절률 24.3%가 기준선의 가장 큰 약점입니다.
 - **게이트 1 미보정:** `MIN_SCORE`가 0.0이라 검색 점수 게이트가 사실상 꺼져 있습니다.
@@ -372,7 +393,7 @@ judge 하나에 "이 답변이 좋은가"를 묻지 않습니다. 문항마다 �
 - **MD 소스 비교의 제약:** 골드셋의 정성 근거가 PDF 쪽 번호로만 적혀 있어, 쪽이 없는 MD 인덱스에서는 검색 적중을 인용구로만 판단할 수 있습니다.
 
 **향후 과제**
-- judge를 OpenAI 호환 LLM으로도 돌릴 수 있게 확장하고, 기존 사람 라벨로 그 judge의 문턱을 다시 보정
+- Gemini judge의 값 판정이 표현만 다른 정답을 놓치지 않도록, 판정 문구를 고치고 사람 라벨로 다시 검증 (Jev 기준이 바뀌지 않게 판정 버전을 분리)
 - `MIN_SCORE` 보정, 하이브리드 검색(키워드+벡터)이나 리랭커
 - 실제 위반이 들어간 합성 답변으로 must_not·문장 근거 판정의 재현율 측정
 - 라벨러 2인 이상으로 라벨러 간 일치도 측정, 골드셋 확대
