@@ -63,3 +63,10 @@ def test_temperature_only_sent_without_reasoning(monkeypatch):
     monkeypatch.setattr(settings, "llm_reasoning_effort", "none")
     assert rag.sampling_params()["temperature"] == settings.llm_temperature
     assert "temperature" not in rag.sampling_params("low")  # Luna는 low 이상에서 temperature=0을 거부한다
+
+
+def test_build_messages_uses_the_selected_prompt(monkeypatch):
+    assert "출처로 답할 수 없으면" in rag.build_messages("질문", _hits())[0]["content"]  # 기본 v1
+    monkeypatch.setattr(settings, "rag_prompt", "v2")
+    system = rag.build_messages("질문", _hits())[0]["content"]
+    assert "일부만 답할 수 있으면" in system and rag.NO_ANSWER in system

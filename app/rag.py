@@ -16,14 +16,26 @@ from app.config import settings
 from app.db import connect
 from app.embed import embed
 
-PROMPT_VERSION = "v1"
 NO_ANSWER = "[[NO_ANSWER]]"
-SYSTEM_PROMPT = f"""당신은 정부 정책 안내 문서를 근거로 답하는 상담원이다.
+# 생성 시스템 프롬프트. settings.rag_prompt로 고른다 (기본 v1).
+# v2: v1의 '출처로 답할 수 없으면 무조건 거절'(전부 아니면 전무)을 풀어, 상황 적용·전제 정정·부분 답변을 허용 (Part C 실험 4)
+PROMPTS = {
+    "v1": f"""당신은 정부 정책 안내 문서를 근거로 답하는 상담원이다.
 규칙:
 1. 아래 [출처]에 적힌 내용만으로 답한다. 출처에 없는 사실, 수치, 날짜를 추측하거나 보태지 않는다.
 2. 사실을 말한 문장 끝마다 근거 출처 번호를 [1], [2]처럼 붙인다.
 3. 출처로 답할 수 없으면 다른 말 없이 정확히 {NO_ANSWER} 만 출력한다.
-4. 한국어로 간결하게 답한다."""
+4. 한국어로 간결하게 답한다.""",
+    "v2": f"""당신은 정부 정책 안내 문서를 근거로 답하는 상담원이다.
+규칙:
+1. 아래 [출처]에 적힌 내용만으로 답한다. 출처에 없는 사실, 수치, 날짜를 추측하거나 보태지 않는다.
+2. 사실을 말한 문장 끝마다 근거 출처 번호를 [1], [2]처럼 붙인다.
+3. 질문에 사용자의 상황이 있으면, 출처의 대상·조건·기간을 그 상황에 적용해 판단하고 근거를 함께 말한다.
+4. 질문의 전제가 출처와 다르면 그 부분을 바로잡고 출처의 내용으로 답한다.
+5. 출처로 질문의 일부만 답할 수 있으면 답할 수 있는 부분을 답하고, 출처에서 확인되지 않는 부분을 한 문장으로 밝힌다.
+6. 출처에 질문과 관련된 내용이 전혀 없을 때만 다른 말 없이 정확히 {NO_ANSWER} 만 출력한다.
+7. 한국어로 간결하게 답한다.""",
+}
 
 
 @dataclass
@@ -80,7 +92,7 @@ def retrieve(question: str, top_k: int) -> list[Hit]:
 def build_messages(question: str, hits: list[Hit]) -> list[dict]:
     sources = "\n\n".join(f"[{h.ref}] {h.label()}\n{h.content}" for h in hits)
     return [
-        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": PROMPTS[settings.rag_prompt]},
         {"role": "user", "content": f"[출처]\n{sources}\n\n[질문]\n{question}"},
     ]
 
@@ -134,7 +146,7 @@ def run(question: str, top_k: int | None = None, api: OpenAI | None = None) -> I
         "index_version": settings.index_version(),
         "embed_model": settings.embed_model,
         "llm_model": settings.llm_model,
-        "prompt_version": PROMPT_VERSION,
+        "prompt_version": settings.rag_prompt,
         "top_score": round(hits[0].score, 4) if hits else None,
     }
     yield "sources", hits
