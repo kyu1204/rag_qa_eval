@@ -1,0 +1,2082 @@
+{
+  "model": "jev-1.13.0",
+  "summary": {
+    "EN/value": {
+      "n": 19,
+      "pos": 9,
+      "neg": 10,
+      "accuracy@0.5": 1.0,
+      "mean_p_pos": 0.92,
+      "mean_p_neg": 0.035,
+      "auc": 1.0
+    },
+    "EN/support": {
+      "n": 12,
+      "pos": 6,
+      "neg": 6,
+      "accuracy@0.5": 1.0,
+      "mean_p_pos": 0.952,
+      "mean_p_neg": 0.023,
+      "auc": 1.0
+    },
+    "EN/point": {
+      "n": 17,
+      "pos": 5,
+      "neg": 12,
+      "accuracy@0.5": 0.765,
+      "mean_p_pos": 0.482,
+      "mean_p_neg": 0.032,
+      "auc": 1.0
+    },
+    "EN/all": {
+      "n": 48,
+      "pos": 20,
+      "neg": 28,
+      "accuracy@0.5": 0.917,
+      "mean_p_pos": 0.82,
+      "mean_p_neg": 0.031,
+      "auc": 1.0
+    },
+    "EN/repeat": {
+      "max_abs_diff": 0.04,
+      "decision_flips@0.5": 1
+    },
+    "KO/value": {
+      "n": 19,
+      "pos": 9,
+      "neg": 10,
+      "accuracy@0.5": 0.947,
+      "mean_p_pos": 0.917,
+      "mean_p_neg": 0.069,
+      "auc": 1.0
+    },
+    "KO/support": {
+      "n": 12,
+      "pos": 6,
+      "neg": 6,
+      "accuracy@0.5": 1.0,
+      "mean_p_pos": 0.962,
+      "mean_p_neg": 0.012,
+      "auc": 1.0
+    },
+    "KO/point": {
+      "n": 17,
+      "pos": 5,
+      "neg": 12,
+      "accuracy@0.5": 0.882,
+      "mean_p_pos": 0.594,
+      "mean_p_neg": 0.046,
+      "auc": 1.0
+    },
+    "KO/all": {
+      "n": 48,
+      "pos": 20,
+      "neg": 28,
+      "accuracy@0.5": 0.938,
+      "mean_p_pos": 0.849,
+      "mean_p_neg": 0.047,
+      "auc": 0.996
+    },
+    "KO/repeat": {
+      "max_abs_diff": 0.09,
+      "decision_flips@0.5": 1
+    }
+  },
+  "input_tokens": 87880,
+  "cost_usd": 0.00369,
+  "mean_latency_s": 0.257,
+  "errors": [
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.49
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p0",
+      "kind": "point",
+      "target": "하도급대금 연동제는 공정거래위원회 소관(하도급법)으로, 하도급대금의 10% 이상을 차지하는 주요 에너지 비용까지 확대되며 2026.8.11. 이후 체결·갱신되는 하도급 계약부터 적용된다.",
+      "truth": true,
+      "p": 0.32
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p1",
+      "kind": "point",
+      "target": "납품대금 연동제는 중소벤처기업부 소관(상생협력법)으로, 수·위탁거래에서 납품대금의 10% 이상인 에너지 경비(전기료·가스비 등)까지 확대되며 2026.12.3. 시행이다.",
+      "truth": true,
+      "p": 0.38
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.31
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-08-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "3,2차 시정명령",
+      "truth": false,
+      "p": 0.53
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.47
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.39
+    }
+  ],
+  "rows": [
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-01-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "매년 3회",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-01-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "매년 1회",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-01-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.94
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-01-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-02-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "15천만원 이하",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-02-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "5천만원 이하",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-02-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.89
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-02-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-03-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "월 30만원",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-03-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "월 20만원",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-03-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-03-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-04-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "27세 이상 24세 이하",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-04-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "9세 이상 24세 이하",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-04-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-04-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-05-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-05-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "과학과 상상력을 좋아하는 아동, 청소년 및 가족 단위 관람객 누구나",
+      "truth": true,
+      "p": 0.88
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-06-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-06-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": true,
+      "p": 0.69
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-07-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 15% 이상",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-07-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-07-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-07-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-08-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "3,2차 시정명령",
+      "truth": false,
+      "p": 0.25
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-09-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "대체역법 제37조 개정",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-09-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "대체역법 제25조 개정",
+      "truth": true,
+      "p": 0.85
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-10-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "손해액의 15배 이내",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-10-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "손해액의 5배 이내",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-10-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "quant-10-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p0",
+      "kind": "point",
+      "target": "노란우산공제 납입한도가 분기별 300만원(연 1,200만원)에서 연 1,800만원으로 바뀐다(2026.7.1. 이후 납입분부터).",
+      "truth": false,
+      "p": 0.07
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p1",
+      "kind": "point",
+      "target": "전통시장·집단상가 등 간이과세 배제지역이 전면 정비되어 직전연도 공급대가 1억 4백만원 미만 개인사업자는 신청 없이 2026.7.1.부터 간이과세(연 1회 신고)를 적용받을 수 있다.",
+      "truth": false,
+      "p": 0.04
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.49
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p3",
+      "kind": "point",
+      "target": "폐업 후 취업한 소상공인은 정책자금(직접대출) 상환기간을 최대 7년 연장받고, 1년 이상 근속 시 금리 0.5%p 인하를 받는다.",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-02",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p0",
+      "kind": "point",
+      "target": "하도급대금 연동제는 공정거래위원회 소관(하도급법)으로, 하도급대금의 10% 이상을 차지하는 주요 에너지 비용까지 확대되며 2026.8.11. 이후 체결·갱신되는 하도급 계약부터 적용된다.",
+      "truth": true,
+      "p": 0.32
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p1",
+      "kind": "point",
+      "target": "납품대금 연동제는 중소벤처기업부 소관(상생협력법)으로, 수·위탁거래에서 납품대금의 10% 이상인 에너지 경비(전기료·가스비 등)까지 확대되며 2026.12.3. 시행이다.",
+      "truth": true,
+      "p": 0.38
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p2",
+      "kind": "point",
+      "target": "납품대금 연동제는 위탁기업이 소기업, 90일 이하 단기계약, 1억원 이하 소액계약, 미연동 합의인 경우 적용이 제외된다.",
+      "truth": true,
+      "p": 0.91
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p3",
+      "kind": "point",
+      "target": "두 제도 모두 기존에는 주요 원재료만 대상이었고 10% 기준이 같다는 공통점이 있다.",
+      "truth": false,
+      "p": 0.11
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.0
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-05",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p0",
+      "kind": "point",
+      "target": "단기 육아휴직은 2026.8.20. 시행이므로 9월에는 적용된다. 만 8세 이하(초등 2학년 이하) 자녀, 감염병 등원·등교 중지 사유에 해당해 1주(7일) 단위로 쓰고 급여를 받을 수 있다(연 1회).",
+      "truth": false,
+      "p": 0.07
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.31
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p2",
+      "kind": "point",
+      "target": "단기 육아휴직은 사업주에게 휴직을 신청하고, 급여는 고용센터(고용24 등)에 신청한다.",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 0,
+      "case": "qual-11",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-01-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "매년 3회",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-01-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "매년 1회",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-01-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.95
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-01-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-02-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "15천만원 이하",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-02-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "5천만원 이하",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-02-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.9
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-02-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-03-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "월 30만원",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-03-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "월 20만원",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-03-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-03-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-04-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "27세 이상 24세 이하",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-04-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "9세 이상 24세 이하",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-04-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-04-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-05-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-05-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "과학과 상상력을 좋아하는 아동, 청소년 및 가족 단위 관람객 누구나",
+      "truth": true,
+      "p": 0.88
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-06-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-06-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": true,
+      "p": 0.67
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-07-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 15% 이상",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-07-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": true,
+      "p": 0.99
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-07-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-07-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-08-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "3,2차 시정명령",
+      "truth": false,
+      "p": 0.29
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-09-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "대체역법 제37조 개정",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-09-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "대체역법 제25조 개정",
+      "truth": true,
+      "p": 0.86
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-10-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "손해액의 15배 이내",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-10-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "손해액의 5배 이내",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-10-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.96
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "quant-10-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p0",
+      "kind": "point",
+      "target": "노란우산공제 납입한도가 분기별 300만원(연 1,200만원)에서 연 1,800만원으로 바뀐다(2026.7.1. 이후 납입분부터).",
+      "truth": false,
+      "p": 0.08
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p1",
+      "kind": "point",
+      "target": "전통시장·집단상가 등 간이과세 배제지역이 전면 정비되어 직전연도 공급대가 1억 4백만원 미만 개인사업자는 신청 없이 2026.7.1.부터 간이과세(연 1회 신고)를 적용받을 수 있다.",
+      "truth": false,
+      "p": 0.04
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.5
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p3",
+      "kind": "point",
+      "target": "폐업 후 취업한 소상공인은 정책자금(직접대출) 상환기간을 최대 7년 연장받고, 1년 이상 근속 시 금리 0.5%p 인하를 받는다.",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-02",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p0",
+      "kind": "point",
+      "target": "하도급대금 연동제는 공정거래위원회 소관(하도급법)으로, 하도급대금의 10% 이상을 차지하는 주요 에너지 비용까지 확대되며 2026.8.11. 이후 체결·갱신되는 하도급 계약부터 적용된다.",
+      "truth": true,
+      "p": 0.32
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p1",
+      "kind": "point",
+      "target": "납품대금 연동제는 중소벤처기업부 소관(상생협력법)으로, 수·위탁거래에서 납품대금의 10% 이상인 에너지 경비(전기료·가스비 등)까지 확대되며 2026.12.3. 시행이다.",
+      "truth": true,
+      "p": 0.39
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p2",
+      "kind": "point",
+      "target": "납품대금 연동제는 위탁기업이 소기업, 90일 이하 단기계약, 1억원 이하 소액계약, 미연동 합의인 경우 적용이 제외된다.",
+      "truth": true,
+      "p": 0.9
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p3",
+      "kind": "point",
+      "target": "두 제도 모두 기존에는 주요 원재료만 대상이었고 10% 기준이 같다는 공통점이 있다.",
+      "truth": false,
+      "p": 0.09
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.0
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-05",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p0",
+      "kind": "point",
+      "target": "단기 육아휴직은 2026.8.20. 시행이므로 9월에는 적용된다. 만 8세 이하(초등 2학년 이하) 자녀, 감염병 등원·등교 중지 사유에 해당해 1주(7일) 단위로 쓰고 급여를 받을 수 있다(연 1회).",
+      "truth": false,
+      "p": 0.07
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.3
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p2",
+      "kind": "point",
+      "target": "단기 육아휴직은 사업주에게 휴직을 신청하고, 급여는 고용센터(고용24 등)에 신청한다.",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-11",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "EN",
+      "run": 1,
+      "case": "qual-11",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-01-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "매년 3회",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-01-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "매년 1회",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-01-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-01-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-02-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "15천만원 이하",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-02-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "5천만원 이하",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-02-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.94
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-02-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-03-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "월 30만원",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-03-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "월 20만원",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-03-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.96
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-03-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-04-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "27세 이상 24세 이하",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-04-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "9세 이상 24세 이하",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-04-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-04-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-05-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": false,
+      "p": 0.04
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-05-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "과학과 상상력을 좋아하는 아동, 청소년 및 가족 단위 관람객 누구나",
+      "truth": true,
+      "p": 0.91
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-06-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-06-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": true,
+      "p": 0.64
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-07-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 15% 이상",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-07-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-07-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-07-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-08-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "3,2차 시정명령",
+      "truth": false,
+      "p": 0.53
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-09-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "대체역법 제37조 개정",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-09-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "대체역법 제25조 개정",
+      "truth": true,
+      "p": 0.86
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-10-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "손해액의 15배 이내",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-10-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "손해액의 5배 이내",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-10-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.96
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "quant-10-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p0",
+      "kind": "point",
+      "target": "노란우산공제 납입한도가 분기별 300만원(연 1,200만원)에서 연 1,800만원으로 바뀐다(2026.7.1. 이후 납입분부터).",
+      "truth": false,
+      "p": 0.13
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p1",
+      "kind": "point",
+      "target": "전통시장·집단상가 등 간이과세 배제지역이 전면 정비되어 직전연도 공급대가 1억 4백만원 미만 개인사업자는 신청 없이 2026.7.1.부터 간이과세(연 1회 신고)를 적용받을 수 있다.",
+      "truth": false,
+      "p": 0.06
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.47
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "p3",
+      "kind": "point",
+      "target": "폐업 후 취업한 소상공인은 정책자금(직접대출) 상환기간을 최대 7년 연장받고, 1년 이상 근속 시 금리 0.5%p 인하를 받는다.",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-02",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p0",
+      "kind": "point",
+      "target": "하도급대금 연동제는 공정거래위원회 소관(하도급법)으로, 하도급대금의 10% 이상을 차지하는 주요 에너지 비용까지 확대되며 2026.8.11. 이후 체결·갱신되는 하도급 계약부터 적용된다.",
+      "truth": true,
+      "p": 0.55
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p1",
+      "kind": "point",
+      "target": "납품대금 연동제는 중소벤처기업부 소관(상생협력법)으로, 수·위탁거래에서 납품대금의 10% 이상인 에너지 경비(전기료·가스비 등)까지 확대되며 2026.12.3. 시행이다.",
+      "truth": true,
+      "p": 0.61
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p2",
+      "kind": "point",
+      "target": "납품대금 연동제는 위탁기업이 소기업, 90일 이하 단기계약, 1억원 이하 소액계약, 미연동 합의인 경우 적용이 제외된다.",
+      "truth": true,
+      "p": 0.95
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "p3",
+      "kind": "point",
+      "target": "두 제도 모두 기존에는 주요 원재료만 대상이었고 10% 기준이 같다는 공통점이 있다.",
+      "truth": false,
+      "p": 0.15
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.0
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-05",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p0",
+      "kind": "point",
+      "target": "단기 육아휴직은 2026.8.20. 시행이므로 9월에는 적용된다. 만 8세 이하(초등 2학년 이하) 자녀, 감염병 등원·등교 중지 사유에 해당해 1주(7일) 단위로 쓰고 급여를 받을 수 있다(연 1회).",
+      "truth": false,
+      "p": 0.11
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.39
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "p2",
+      "kind": "point",
+      "target": "단기 육아휴직은 사업주에게 휴직을 신청하고, 급여는 고용센터(고용24 등)에 신청한다.",
+      "truth": false,
+      "p": 0.04
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 0,
+      "case": "qual-11",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-01-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "매년 3회",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-01-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "매년 1회",
+      "truth": true,
+      "p": 0.98
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-01-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-01-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-02-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "15천만원 이하",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-02-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "5천만원 이하",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-02-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.95
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-02-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-03-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "월 30만원",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-03-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "월 20만원",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-03-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-03-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-04-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "27세 이상 24세 이하",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-04-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "9세 이상 24세 이하",
+      "truth": true,
+      "p": 0.96
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-04-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.96
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-04-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-05-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": false,
+      "p": 0.04
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-05-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "과학과 상상력을 좋아하는 아동, 청소년 및 가족 단위 관람객 누구나",
+      "truth": true,
+      "p": 0.91
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-06-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-06-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "시·청각 장애를 가지고 있는 학생",
+      "truth": true,
+      "p": 0.65
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-07-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "납품대금의 15% 이상",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-07-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "납품대금의 10% 이상",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-07-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-07-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-08-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "3,2차 시정명령",
+      "truth": false,
+      "p": 0.53
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-09-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "대체역법 제37조 개정",
+      "truth": false,
+      "p": 0.02
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-09-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "대체역법 제25조 개정",
+      "truth": true,
+      "p": 0.87
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-10-literal",
+      "check": "v_neg",
+      "kind": "value",
+      "target": "손해액의 15배 이내",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-10-literal",
+      "check": "v_pos",
+      "kind": "value",
+      "target": "손해액의 5배 이내",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-10-literal:support",
+      "check": "s_a",
+      "kind": "support",
+      "target": "a",
+      "truth": true,
+      "p": 0.97
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "quant-10-literal:support",
+      "check": "s_b",
+      "kind": "support",
+      "target": "b",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p0",
+      "kind": "point",
+      "target": "노란우산공제 납입한도가 분기별 300만원(연 1,200만원)에서 연 1,800만원으로 바뀐다(2026.7.1. 이후 납입분부터).",
+      "truth": false,
+      "p": 0.15
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p1",
+      "kind": "point",
+      "target": "전통시장·집단상가 등 간이과세 배제지역이 전면 정비되어 직전연도 공급대가 1억 4백만원 미만 개인사업자는 신청 없이 2026.7.1.부터 간이과세(연 1회 신고)를 적용받을 수 있다.",
+      "truth": false,
+      "p": 0.05
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p2",
+      "kind": "point",
+      "target": "매출·업종·업력 등 비금융정보로 성장성을 평가하는 소상공인 특화 신용평가(SCB)가 2026년 8월부터 은행권에서 시범운영된다.",
+      "truth": true,
+      "p": 0.47
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "p3",
+      "kind": "point",
+      "target": "폐업 후 취업한 소상공인은 정책자금(직접대출) 상환기간을 최대 7년 연장받고, 1년 이상 근속 시 금리 0.5%p 인하를 받는다.",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-02",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p0",
+      "kind": "point",
+      "target": "하도급대금 연동제는 공정거래위원회 소관(하도급법)으로, 하도급대금의 10% 이상을 차지하는 주요 에너지 비용까지 확대되며 2026.8.11. 이후 체결·갱신되는 하도급 계약부터 적용된다.",
+      "truth": true,
+      "p": 0.46
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p1",
+      "kind": "point",
+      "target": "납품대금 연동제는 중소벤처기업부 소관(상생협력법)으로, 수·위탁거래에서 납품대금의 10% 이상인 에너지 경비(전기료·가스비 등)까지 확대되며 2026.12.3. 시행이다.",
+      "truth": true,
+      "p": 0.61
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p2",
+      "kind": "point",
+      "target": "납품대금 연동제는 위탁기업이 소기업, 90일 이하 단기계약, 1억원 이하 소액계약, 미연동 합의인 경우 적용이 제외된다.",
+      "truth": true,
+      "p": 0.93
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "p3",
+      "kind": "point",
+      "target": "두 제도 모두 기존에는 주요 원재료만 대상이었고 10% 기준이 같다는 공통점이 있다.",
+      "truth": false,
+      "p": 0.15
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.0
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-05",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p0",
+      "kind": "point",
+      "target": "단기 육아휴직은 2026.8.20. 시행이므로 9월에는 적용된다. 만 8세 이하(초등 2학년 이하) 자녀, 감염병 등원·등교 중지 사유에 해당해 1주(7일) 단위로 쓰고 급여를 받을 수 있다(연 1회).",
+      "truth": false,
+      "p": 0.1
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p1",
+      "kind": "point",
+      "target": "4시간 근무 시 휴게시간 면제를 신청해 바로 퇴근할 수 있는 제도는 2026.12.10. 시행이므로 9월에는 아직 적용되지 않는다.",
+      "truth": true,
+      "p": 0.34
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-11",
+      "check": "p2",
+      "kind": "point",
+      "target": "단기 육아휴직은 사업주에게 휴직을 신청하고, 급여는 고용센터(고용24 등)에 신청한다.",
+      "truth": false,
+      "p": 0.03
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-11",
+      "check": "c0",
+      "kind": "point",
+      "target": "1형 당뇨 등 췌장의 인슐린 분비 기능 손상에 대한 췌장장애가 신설되어 2026.7.1.부터 기준 충족 시 장애인 등록이 가능하다(보건복지부).",
+      "truth": false,
+      "p": 0.01
+    },
+    {
+      "lang": "KO",
+      "run": 1,
+      "case": "qual-11",
+      "check": "c1",
+      "kind": "point",
+      "target": "전자장치를 부착한 가해자가 일정 거리 이내로 접근하면 피해자가 스마트폰 지도에서 가해자의 실제 위치를 확인할 수 있고, 경찰에도 통보된다(법무부, 2026.6.24.).",
+      "truth": false,
+      "p": 0.01
+    }
+  ]
+}
