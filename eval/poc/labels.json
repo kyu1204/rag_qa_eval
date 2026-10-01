@@ -1,0 +1,28 @@
+{
+  "_note": "PoC용 잠정 진실값. 라벨러는 Claude(사람 아님). point는 '핵심 사실(금액·날짜·대상 요건)이 모두 있어야 참' 기준. borderline에 애매했던 판단을 적는다.",
+  "value": {
+    "quant-01-literal": {"states_gold": true, "sentence": "매년 1회 실시합니다.", "value_in_sentence": "1회", "supported": true},
+    "quant-02-literal": {"states_gold": true, "sentence": "5천만 원 이하입니다.", "value_in_sentence": "5천만 원", "supported": true},
+    "quant-03-literal": {"states_gold": true, "sentence": "미성년 지원자녀 1인당 매월 20만 원을 지원합니다.", "value_in_sentence": "20만 원", "supported": true},
+    "quant-04-literal": {"states_gold": true, "sentence": "9세 이상 24세 이하입니다.", "value_in_sentence": "24세", "supported": true},
+    "quant-05-literal": {"states_gold": true},
+    "quant-06-literal": {"states_gold": true},
+    "quant-07-literal": {"states_gold": true, "sentence": "납품대금의 10% 이상입니다.", "value_in_sentence": "10%", "supported": true},
+    "quant-08-literal": {"states_gold": null},
+    "quant-09-literal": {"states_gold": true},
+    "quant-10-literal": {"states_gold": true, "sentence": "손해액의 5배 이내입니다.", "value_in_sentence": "5배", "supported": true}
+  },
+  "point": {
+    "qual-02": [false, false, true, false],
+    "qual-05": [true, true, true, false],
+    "qual-11": [false, true, false]
+  },
+  "borderline": {
+    "quant-08-literal": "답변 첫머리가 '3차까지입니다'(틀린 틀)이고 뒤에 '1·2차는 시정명령'을 말함 - 값 판정에서 제외",
+    "qual-02 p0": "금액(1,200만 -> 1,800만)은 맞지만 '2026.7.1. 이후 납입분부터'가 없어 거짓",
+    "qual-02 p2": "SCB·8월 시범운영은 있고 '매출·업종·업력 비금융정보'는 방법 설명이라 핵심 사실이 아니라고 보아 참",
+    "qual-05 p3": "'기존에는 원재료만', '10% 기준이 같다'는 공통점을 명시하지 않아 거짓",
+    "qual-11 p1": "시행일을 '12월'로만 말함(원문 12.10) - 9월 미적용이라는 판단에 필요한 사실은 있어 참",
+    "qual-11 p0": "8.20 시행·9월 적용·1주 단위는 있으나 '만 8세 이하' 대상 요건이 없어 거짓"
+  }
+}
