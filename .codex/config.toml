@@ -1,0 +1,10 @@
+# Managed by oh-my-harness.
+# The hooks=true entry under [features] is required for Codex hooks.
+# The goals=true entry under [features] enables Codex /goal.
+# Add your own tables (e.g. [mcp_servers.foo]) above or below freely.
+# https://github.com/kyu1204/oh-my-harness
+
+[features]
+hooks = true
+goals = true
+
