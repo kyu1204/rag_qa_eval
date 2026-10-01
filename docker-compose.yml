@@ -1,0 +1,18 @@
+services:
+  db:
+    image: pgvector/pgvector:0.8.6-pg17
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rag}
+      POSTGRES_DB: rag
+    ports:
+      - "127.0.0.1:${PG_PORT:-5432}:5432" # LAN 노출 금지
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag"]
+      interval: 2s
+      retries: 30
+
+volumes:
+  pgdata:
