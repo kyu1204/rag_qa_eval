@@ -2,6 +2,7 @@
 
 - split (기준선): 문서 구조를 모르는 범용 재귀 분할. 큰 경계(빈 줄 -> 줄 -> 문장 -> 공백)부터
   잘라 조각을 만들고, 목표 토큰까지 이어 붙이며 직전 청크 끝 조각들로 overlap을 준다.
+- policy (개선안): policy_book 분석기가 뽑은 정책 1건(1쪽)을 청크 1개로. 정책명·부처·장을 문맥 헤더로.
 """
 
 import statistics
@@ -16,6 +17,7 @@ from app.extract import Page, extract
 
 ENC = tiktoken.get_encoding("o200k_base")  # 크기 산정용 근사 (임베딩 모델 토크나이저와 정확히 같지 않음)
 SEPARATORS = ["\n\n", "\n", ". ", " "]
+POLICY_MAX_TOKENS = 1600  # 실측 최대 1,355. 넘으면 코퍼스나 추출이 바뀐 것이니 실패시킨다
 
 
 @dataclass
@@ -81,9 +83,27 @@ def split_chunks(pages: list[Page], doc_title: str, max_tokens: int, overlap: in
     return chunks
 
 
+def policy_chunks(pages: list[Page]) -> list[Chunk]:
+    chunks = []
+    for page in pages:
+        m = page.meta
+        if "title" not in m:
+            raise ValueError("policy 청킹은 policy_book 추출 결과가 필요하다 (EXTRACTOR=policy_book)")
+        tokens = n_tokens(page.text)
+        if tokens > POLICY_MAX_TOKENS:
+            raise ValueError(f"PDF {page.page}쪽 정책이 {tokens}토큰으로 상한 {POLICY_MAX_TOKENS} 초과")
+        heading = f"{m['chapter']} > {m['ministry']} > {m['title']}"
+        embed_text = f"{m['title']} ({m['ministry']}, {m['chapter']})\n{page.text}"
+        meta = m | {"heading": heading, "token_count": tokens}
+        chunks.append(Chunk(len(chunks), page.text, page.page, page.page, embed_text, meta))
+    return chunks
+
+
 def chunk(pages: list[Page], doc_title: str) -> list[Chunk]:
     if settings.chunk_strategy == "split":
         return split_chunks(pages, doc_title, settings.chunk_tokens, settings.chunk_overlap)
+    if settings.chunk_strategy == "policy":
+        return policy_chunks(pages)
     raise ValueError(f"알 수 없는 청킹 전략: {settings.chunk_strategy}")
 
 
