@@ -1,0 +1,75 @@
+{
+  "sheet": "eval/labels/20261001-173916_baseline_r0.md",
+  "run": "eval/runs/20261001-173916_baseline",
+  "skipped_uncertain": 1,
+  "kinds": {
+    "fact": {
+      "n": 85,
+      "human_yes": 51,
+      "tau": 0.3,
+      "accuracy": 0.812,
+      "kappa": 0.574,
+      "confusion": {
+        "judge_yes_human_yes": 51,
+        "judge_yes_human_no": 16,
+        "judge_no_human_yes": 0,
+        "judge_no_human_no": 18
+      },
+      "best_tau": 0.812,
+      "best_tau_accuracy": 0.953,
+      "cv_accuracy": 0.953
+    },
+    "must_not": {
+      "n": 14,
+      "human_yes": 0,
+      "tau": 0.7,
+      "accuracy": 1.0,
+      "kappa": null,
+      "confusion": {
+        "judge_yes_human_yes": 0,
+        "judge_yes_human_no": 0,
+        "judge_no_human_yes": 0,
+        "judge_no_human_no": 14
+      },
+      "best_tau": 0.795,
+      "best_tau_accuracy": 1.0,
+      "cv_accuracy": 1.0
+    },
+    "value": {
+      "n": 17,
+      "human_yes": 16,
+      "tau": 0.5,
+      "accuracy": 0.941,
+      "kappa": 0.0,
+      "confusion": {
+        "judge_yes_human_yes": 16,
+        "judge_yes_human_no": 1,
+        "judge_no_human_yes": 0,
+        "judge_no_human_no": 0
+      },
+      "best_tau": 0.825,
+      "best_tau_accuracy": 1.0,
+      "cv_accuracy": 0.941
+    },
+    "grade": {
+      "n": 2,
+      "agreement": 1.0
+    },
+    "support": {
+      "n": 30,
+      "human_yes": 30,
+      "tau": 0.5,
+      "accuracy": 1.0,
+      "kappa": null,
+      "confusion": {
+        "judge_yes_human_yes": 30,
+        "judge_yes_human_no": 0,
+        "judge_no_human_yes": 0,
+        "judge_no_human_no": 0
+      },
+      "best_tau": 0.333,
+      "best_tau_accuracy": 1.0,
+      "cv_accuracy": 1.0
+    }
+  }
+}
