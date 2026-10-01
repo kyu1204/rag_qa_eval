@@ -95,7 +95,8 @@ def cmd_compare(args) -> int:
     lines = [f"# 비교: {info_a['name']} -> {info_b['name']}", ""]
     if info_a["gold"]["hash"] != info_b["gold"]["hash"]:
         lines += ["**경고: 두 실행의 골드셋이 다르다. 비교가 성립하지 않을 수 있다.**", ""]
-    lines += [f"- 덮어쓴 설정: {info_a['overrides'] or '없음'} -> {info_b['overrides'] or '없음'}",
+    label = lambda info: (info["overrides"] | info.get("rescore_overrides", {})) or "없음"  # noqa: E731
+    lines += [f"- 덮어쓴 설정: {label(info_a)} -> {label(info_b)}",
               f"- index: {info_a['index_version']} -> {info_b['index_version']}", "",
               "| 묶음 | 안전성 | 유용성 |", "|---|---|---|"]
     for name in scoring.GROUPS + ["전체"]:
