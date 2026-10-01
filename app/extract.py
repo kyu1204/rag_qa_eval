@@ -27,13 +27,12 @@ SENTENCE_END = (".", "?", "!", ")", "]", "다", "요")
 
 
 @dataclass
-class PolicyPage:
-    page: int  # 인쇄 쪽번호
-    chapter: str
-    ministry: str
-    title: str
+class Page:
+    """추출기 공통 출력. page는 PDF 쪽 인덱스(1부터), 쪽 개념이 없는 문서는 None."""
+
+    page: int | None
     text: str
-    meta: dict = field(default_factory=dict)  # effective(시행일), tags
+    meta: dict = field(default_factory=dict)
 
 
 def sniff(data: bytes, name: str) -> str | None:
@@ -106,7 +105,8 @@ def _page_lines(page: pymupdf.Page) -> list[tuple[float, float, list[tuple[str, 
     return blocks
 
 
-def extract_pdf(data: bytes) -> list[PolicyPage]:
+def extract_policy_book(data: bytes) -> list[Page]:
+    """책자 전용 분석기: 상세 정책 쪽만, meta에 printed_page·chapter·ministry·title·effective·tags."""
     doc = pymupdf.open(stream=data, filetype="pdf")
     pages, chapter = [], ""
     for page in doc:
@@ -135,7 +135,8 @@ def extract_pdf(data: bytes) -> list[PolicyPage]:
         text = SECTION_LABEL_RE.sub(lambda m: m.group(1).replace(" ", "") + ": ", text)
         if page_no is None or not (ministry and title):
             raise ValueError(f"PDF {page.number + 1}쪽: 쪽번호·부처·정책명 추출 실패")
-        pages.append(PolicyPage(page_no, chapter, ministry, title, text, _meta(text)))
+        meta = {"printed_page": page_no, "chapter": chapter, "ministry": ministry, "title": title}
+        pages.append(Page(page.number + 1, text, meta | _meta(text)))
     return pages
 
 
@@ -152,6 +153,6 @@ def _meta(text: str) -> dict:
 
 if __name__ == "__main__":
     path = Path(sys.argv[1])
-    for p in extract_pdf(path.read_bytes()):
-        print(f"\n===== p.{p.page} | {p.chapter} | {p.ministry} | {p.title} | {p.meta}")
+    for p in extract_policy_book(path.read_bytes()):
+        print(f"\n===== PDF p.{p.page} | {p.meta}")
         print(p.text)

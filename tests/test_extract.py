@@ -1,7 +1,7 @@
 import unicodedata
 from pathlib import Path
 
-from app.extract import clean, extract_pdf, join_lines, sniff
+from app.extract import clean, extract_policy_book, join_lines, sniff
 
 CORPUS_PDF = Path("data/corpus/2026년 하반기부터 이렇게 달라집니다.pdf")
 
@@ -30,15 +30,22 @@ def test_join_lines_separates_table_cells_but_not_labels():
     assert join_lines([("추진배경", 0), ("배경 설명", 0)]) == "추진배경 배경 설명"
 
 
-def test_corpus_extraction_regression():
-    pages = extract_pdf(CORPUS_PDF.read_bytes())
+def test_policy_book_extraction_regression():
+    pages = extract_policy_book(CORPUS_PDF.read_bytes())
     assert len(pages) == 245
     numbers = [p.page for p in pages]
     assert numbers == sorted(numbers) and len(set(numbers)) == 245
-    assert all(p.chapter and p.ministry and p.title for p in pages)
-    first = next(p for p in pages if p.page == 18)
-    assert (first.ministry, first.title) == ("기획예산처", "통합재정정보 플랫폼 ‘모두의 재정’ 구축")
-    assert first.meta == {"effective": "2026년 12월", "tags": ["통합재정정보", "AI 재정플랫폼", "정보공개"]}
+    assert all(p.page - p.meta["printed_page"] == 42 for p in pages)  # 이 책은 인쇄 쪽 = PDF 쪽 - 42
+    assert all(p.meta["chapter"] and p.meta["ministry"] and p.meta["title"] for p in pages)
+    first = next(p for p in pages if p.meta["printed_page"] == 18)
+    assert first.meta == {
+        "printed_page": 18,
+        "chapter": "제1장 금융·재정·조세",
+        "ministry": "기획예산처",
+        "title": "통합재정정보 플랫폼 ‘모두의 재정’ 구축",
+        "effective": "2026년 12월",
+        "tags": ["통합재정정보", "AI 재정플랫폼", "정보공개"],
+    }
     assert "구 분 | 제도 시행 전 | 제도 시행 후" in first.text
     text = "".join(p.text for p in pages)
     assert "••" not in text and not any(unicodedata.category(c) in ("Cc", "Cf", "Co") for c in text if c != "\n")
