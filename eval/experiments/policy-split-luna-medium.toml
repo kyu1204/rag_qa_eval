@@ -1,0 +1,8 @@
+# Part C 실험 3 가설: 고정 길이 분할은 정책 하나를 여러 청크로 쪼개거나 이웃 정책과 섞어 청크가 의미 단위가 아니고, 그래서
+# 검색이 뾰족하지 않다. 정책·문맥 단위로 적재하면 근거 재현율이 오르고 검색 실패가 줄 것이다.
+# 실험 1의 B(Luna, 추론 medium, 온도는 API 기본값 1), top_k 5에서 적재 방식만 바꾼다.
+# 대조군: 같은 분석기로 쪽만 거르고 고정 길이 분할(500/75)은 그대로. 쪽 거르기와 정책 단위 자르기의 효과를 가른다
+[settings]
+llm_reasoning_effort = "medium"
+extractor = "policy_book"
+chunk_strategy = "split"
