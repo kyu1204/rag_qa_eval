@@ -1,0 +1,8 @@
+# Part C 가설: 온도·추론(또는 모델)을 바꾸면 질문을 분석할 여지가 늘어, 근거가 검색됐는데도 거절하던 답변을
+# 거절하지 않고 답할 것이다 (오거절률 하락, 유용성 상승, 안전성 유지 기대). 생성 설정만 바꾸고 골드셋·judge·인덱스는 고정.
+# 실험 C: 모델의 효과. Luna -> Terra, 추론 none, 온도 0 (기준선과 같은 설정)
+[settings]
+llm_base_url = "https://mlapi.run/e1ede337-92cd-45f8-b0a1-f7d58d337268/v1"  # Elice ML API, 키는 ELICE_API_KEY
+llm_model = "gpt-5.6-terra"
+llm_price_in = 3040  # 원/100만 토큰 (Elice 단가: 입력 ₩3,040, 캐시 입력 ₩304, 출력 ₩18,270)
+llm_price_out = 18270

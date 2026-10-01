@@ -84,3 +84,11 @@ def test_llm_judge_turns_votes_into_probabilities():
         out = judge.judge_record(NEG, ANSWERED, client, repeats=2)
     assert out["checks"]["s0"]["p"] == 0.5 and out["checks"]["s1"]["ps"] == [0.0, 0.0]  # 찬성 표 비율
     assert out["checks"]["grade"]["choices"] == ["2", "1"] and out["judge_tokens"] == 300
+
+
+def test_judge_template_v2_checks_claims_of_absence(monkeypatch):
+    from app.config import settings
+    assert "실제로 없으면" not in judge._question("support", "s0")["instructions"]  # 기본 v1
+    monkeypatch.setattr(settings, "judge_template", "judge-ko-v2")
+    assert "실제로 없으면" in judge._question("support", "s0")["instructions"]
+    assert judge._question("fact", "가")["instructions"] == judge.TEMPLATES["fact"].format(target="가")  # 다른 판정은 그대로

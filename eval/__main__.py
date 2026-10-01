@@ -105,7 +105,7 @@ def cmd_rejudge(args) -> int:
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rejudged", "rejudged_from": str(src), "rejudge_overrides": overrides,
                        "judge_repeats": runner.settings.judge_repeats, "settings": report.public_settings(), "gold": gold_info,
-                       "models": info["models"] | {"judge": judge.judge_label(), "judge_template": judge.TEMPLATE_VERSION}}
+                       "models": info["models"] | {"judge": judge.judge_label(), "judge_template": runner.settings.judge_template}}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
     return 0

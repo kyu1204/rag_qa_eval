@@ -1,0 +1,67 @@
+{
+  "name": "k20-luna-medium",
+  "started_at": "2026-10-02T02:10:06",
+  "finished_at": "2026-10-02T02:11:45",
+  "gold": {
+    "name": "mofe-2026h2",
+    "path": "eval/gold",
+    "hash": "e4108517ebbd",
+    "items": 43
+  },
+  "documents": [
+    {
+      "id": "2026년 하반기부터 이렇게 달라집니다.pdf",
+      "sha256": "09fcbfa4c4dbce1a0038f9fafcebecf0576ed55c53a6fa14bd70abb2b7f39c0c"
+    }
+  ],
+  "overrides": {
+    "LLM_REASONING_EFFORT": "medium",
+    "TOP_K": "20"
+  },
+  "settings": {
+    "embed_base_url": "https://mlapi.run/b54ff33e-6d14-42df-93f9-0f1132160ee8/v1",
+    "embed_model": "text-embedding-3-small",
+    "embed_dim": 1536,
+    "llm_base_url": "https://mlapi.run/286e9158-d32e-436d-a23d-36b43fc8e68a/v1",
+    "llm_model": "gpt-5.6-luna",
+    "llm_reasoning_effort": "medium",
+    "llm_temperature": 0.0,
+    "llm_seed": 42,
+    "top_k": 20,
+    "min_score": 0.0,
+    "corpus_dir": "data/corpus",
+    "judge_endpoint": "https://api.typesafe.ai/v1/systemone",
+    "judge_model": "jev-1.13.0",
+    "judge_repeats": 2,
+    "tau_value": 0.5,
+    "tau_fact": 0.8,
+    "tau_must_not": 0.7,
+    "tau_support": 0.5,
+    "coverage_full": 0.75,
+    "llm_price_in": 304.0,
+    "llm_price_out": 1827.0,
+    "extractor": "generic",
+    "chunk_strategy": "split",
+    "chunk_tokens": 500,
+    "chunk_overlap": 75
+  },
+  "index_version": "95251427",
+  "index_chunks": 693,
+  "models": {
+    "embed": "text-embedding-3-small",
+    "llm": "gpt-5.6-luna",
+    "llm_reasoning_effort": "medium",
+    "llm_seed": 42,
+    "rag_prompt": "v1",
+    "judge": "jev-1.13.0",
+    "judge_template": "judge-ko-v1"
+  },
+  "repeats": 3,
+  "judge_repeats": 2,
+  "git": {
+    "sha": "a18df08",
+    "dirty": false
+  },
+  "python": "3.13.5",
+  "uv_lock_sha256": "51b16166b07d"
+}
