@@ -16,3 +16,6 @@ __pycache__/
 
 # macOS
 .DS_Store
+
+# 평가 실행 결과 (README에 인용할 실행만 git add -f로 커밋)
+eval/runs/
