@@ -1,0 +1,71 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-branch-guard.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-no-verify-guard.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-force-push-guard.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-semantic-diff-gate.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-harness-guard.sh'"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-loop-guard.sh'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/minkyu/Documents/rag_qa_eval/.omh/hooks/catalog-stop-uncommitted-warn.sh'"
+          }
+        ]
+      }
+    ]
+  }
+}
