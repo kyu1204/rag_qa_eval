@@ -67,12 +67,13 @@ def _load_run(path: Path) -> tuple[dict, list[dict], dict]:
     return info, records, json.loads((path / "summary.json").read_text())
 
 
-def _gold_items(info: dict) -> dict[str, dict]:
-    """실행 당시 골드셋을 다시 읽는다. 그 사이 바뀌었으면 경고 (판정·채점이 새 골드셋 기준이 된다)."""
+def _gold_items(info: dict) -> tuple[dict[str, dict], dict]:
+    """(문항, 기록용 gold 항목). 실행 당시 골드셋을 다시 읽어, 그 사이 바뀌었으면 경고한다.
+    판정·채점이 새 골드셋 기준이 되므로 기록도 지금 읽은 해시로 바꾼다."""
     gold = load(info["gold"]["path"])
     if gold.hash != info["gold"]["hash"]:
         report.console.print(f"[yellow]경고: 골드셋이 실행 당시({info['gold']['hash']})와 다르다({gold.hash})[/]")
-    return {item["id"]: item for item in gold.items}
+    return {item["id"]: item for item in gold.items}, info["gold"] | {"hash": gold.hash, "items": len(gold.items)}
 
 
 def cmd_rescore(args) -> int:
@@ -81,10 +82,10 @@ def cmd_rescore(args) -> int:
     info, records, _ = _load_run(src)
     overrides = parse_overrides(args.set, None)
     with runner.overridden(info["overrides"] | overrides):
-        items_by_id = _gold_items(info)
+        items_by_id, gold_info = _gold_items(info)
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rescored", "rescored_from": str(src), "rescore_overrides": overrides,
-                       "settings": report.public_settings()}
+                       "settings": report.public_settings(), "gold": gold_info}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
     return 0
@@ -96,14 +97,14 @@ def cmd_rejudge(args) -> int:
     info, records, _ = _load_run(src)
     overrides = parse_overrides(args.set, None)
     with runner.overridden(info["overrides"] | overrides):
-        items_by_id = _gold_items(info)
+        items_by_id, gold_info = _gold_items(info)
         for record in records:
             record.pop("judge", None)
             record.pop("result", None)
         judge.judge_all(items_by_id, [r for r in records if r["status"] != "error"])
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rejudged", "rejudged_from": str(src), "rejudge_overrides": overrides,
-                       "judge_repeats": runner.settings.judge_repeats, "settings": report.public_settings(),
+                       "judge_repeats": runner.settings.judge_repeats, "settings": report.public_settings(), "gold": gold_info,
                        "models": info["models"] | {"judge": runner.settings.judge_model, "judge_template": judge.TEMPLATE_VERSION}}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
