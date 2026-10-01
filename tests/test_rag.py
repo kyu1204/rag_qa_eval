@@ -70,3 +70,9 @@ def test_build_messages_uses_the_selected_prompt(monkeypatch):
     monkeypatch.setattr(settings, "rag_prompt", "v2")
     system = rag.build_messages("질문", _hits())[0]["content"]
     assert "일부만 답할 수 있으면" in system and rag.NO_ANSWER in system
+
+
+def test_prompt_v3_adds_the_effective_date_check(monkeypatch):
+    monkeypatch.setattr(settings, "rag_prompt", "v3")
+    system = rag.build_messages("질문", _hits())[0]["content"]
+    assert "시행일이 질문 속 시점보다 늦으면" in system and "일부만 답할 수 있으면" in system

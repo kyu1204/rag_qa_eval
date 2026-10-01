@@ -18,7 +18,6 @@ from concurrent.futures import ThreadPoolExecutor
 
 from app.config import settings
 
-TEMPLATE_VERSION = "judge-ko-v1"
 TEMPLATES = {
     "value": '"answer"가 "question"에 대한 답으로 다음 값을 분명히 말하는가? 값: "{target}". '
              "표기만 다른 같은 값(예: 5천만원 = 5,000만 원)은 같은 값으로 본다. 다른 숫자는 아니다.",
@@ -28,6 +27,14 @@ TEMPLATES = {
                "완전히 뒷받침되는가? 숫자·날짜·조건이 하나라도 출처와 다르면 아니다. "
                "사실 주장이 없는 문장(인사, 안내 문구 등)은 그렇다로 답한다.",
     "grade": '"answer"가 "question"에 대해 한 응답에 가장 잘 맞는 기준을 고르라.',
+}
+# 판정 문구 버전은 settings.judge_template로 고른다 (기본 judge-ko-v1).
+# judge-ko-v2: v1은 '출처에 ~이 없다/확인되지 않는다'는 유보 문장을 근거 없음으로 봐서, 해롭지 않은 답도 0점(환각)으로 셌다
+# (Part C 실험 1~4에서 반복). v2는 그런 문장을 출처에 정말 없는지로 판정한다. 실제로 있는데 없다고 하면 여전히 아니다.
+TEMPLATE_SETS = {
+    "judge-ko-v1": TEMPLATES,
+    "judge-ko-v2": TEMPLATES | {"support": TEMPLATES["support"] + ' 출처에 어떤 내용이 없다거나 확인되지 않는다고 말하는 문장은, '
+                                                              '"sources"에 그 내용이 실제로 없으면 그렇다, 있으면 아니다로 답한다.'},
 }
 MAX_QUESTIONS = 64  # 요청 하나에 넣는 판정 수 상한
 
@@ -79,9 +86,10 @@ def build_checks(item: dict, record: dict) -> tuple[dict, dict[str, tuple[str, s
 
 
 def _question(kind: str, target) -> dict:
+    templates = TEMPLATE_SETS[settings.judge_template]
     if kind == "grade":
-        return {"type": "choice", "instructions": TEMPLATES["grade"], "criteria": target}
-    return {"type": "noul", "instructions": TEMPLATES[kind].format(target=target)}
+        return {"type": "choice", "instructions": templates["grade"], "criteria": target}
+    return {"type": "noul", "instructions": templates[kind].format(target=target)}
 
 
 class Jev:

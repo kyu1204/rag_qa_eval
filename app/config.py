@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     llm_reasoning_effort: Literal["none", "low", "medium", "high"] = "none"
     llm_temperature: float = 0.0
     llm_seed: int = 42
-    rag_prompt: Literal["v1", "v2"] = "v1"  # 생성 시스템 프롬프트 버전 (app/rag.py PROMPTS)
+    rag_prompt: Literal["v1", "v2", "v3"] = "v1"  # 생성 시스템 프롬프트 버전 (app/rag.py PROMPTS)
 
     top_k: int = 5
     min_score: float = 0.0  # 게이트1: top1 코사인 유사도가 이보다 낮으면 LLM 호출 없이 응답 불가. Part B에서 보정
@@ -33,6 +33,7 @@ class Settings(BaseSettings):
     typesafe_api_key: str = ""
     judge_endpoint: str = "https://api.typesafe.ai/v1/systemone"
     judge_model: str = "jev-1.13.0"
+    judge_template: Literal["judge-ko-v1", "judge-ko-v2"] = "judge-ko-v1"  # 판정 문구 버전 (eval/judge.py TEMPLATE_SETS)
     judge_repeats: int = 2  # 같은 판정을 반복해 확률 평균 (PoC 흔들림 최대 0.09)
     tau_value: float = 0.5  # 정량 값 판정 문턱
     tau_fact: float = 0.8  # 정성 사실 포함 문턱. 사람 라벨 85건: 0.3이면 81%(judge가 일부만 있는 사실도 예), 0.75~0.85면 94%
