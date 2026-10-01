@@ -108,29 +108,36 @@ uv run pytest
 
 ## 4. 시스템 아키텍처
 
+**적재** (`python -m app.ingest`)
+
 ```mermaid
-flowchart TB
-    subgraph ING["적재: python -m app.ingest"]
-        F["PDF / MD / TXT"] --> SN["형식 판별<br>(확장자가 아니라 내용으로)"] --> EX["추출<br>generic | policy_book"] --> CH["청킹<br>split 500/75 | policy"] --> EM["임베딩<br>text-embedding-3-small"]
-    end
-    EM --> DB[("PostgreSQL + pgvector<br>documents / chunks<br>index_version별 공존")]
-    subgraph QRY["질의: POST /query (JSON 또는 SSE)"]
-        Q["질문"] --> RT["검색 top-k<br>코사인, HNSW"] --> G1{"게이트 1<br>top1 점수 >= MIN_SCORE"}
-        G1 -- "통과" --> GEN["생성 GPT-5.6 Luna<br>출처만으로 답하고 [n] 인용"] --> G2{"게이트 2<br>NO_ANSWER 센티널인가"}
-        G2 -- "아니오" --> CV["인용 검증"] --> ANS["답변 + 출처"]
-        G1 -- "미달" --> NA["응답 불가<br>insufficient_context"]
-        G2 -- "예" --> NA
-    end
-    DB --> RT
-    subgraph EVL["평가: python -m eval run"]
-        GS["골드셋 43문항"] --> RUN["실행기<br>설정 덮어쓰기, 반복"] --> JD["judge (Jev)<br>사실, 정답 값, 문장 근거, must_not, 기준"] --> SC["규칙 채점 0/1/2<br>실패 원인"] --> RP["report.md, summary.json, run.json"]
-    end
-    RUN -.->|"같은 rag.run() 호출"| Q
+flowchart LR
+    A["문서 파일"] --> B["형식 판별"] --> C["추출"] --> D["청킹"] --> E["임베딩"] --> F[("PostgreSQL + pgvector")]
 ```
 
-- **적재:** 파일 형식을 내용으로 판별해 쪽 단위 텍스트를 뽑고, 청크로 나눠 임베딩한 뒤 저장합니다.
-- **질의:** API, 웹 UI, 평가 하네스가 모두 같은 `app/rag.py`를 호출합니다. 그래서 평가 결과가 실제 서비스 동작과 같습니다.
-- **평가:** 골드셋 문항을 RAG에 넣고, 답변을 judge가 판정하고, 규칙으로 채점해 리포트를 만듭니다.
+파일 형식을 확장자가 아니라 내용으로 판별하고(PDF, MD, TXT), 쪽 단위 텍스트를 뽑습니다(`generic`, 선택으로 `policy_book`). 청크로 나눈 뒤(`split` 500/75, 선택으로 `policy`) text-embedding-3-small로 임베딩해 저장합니다. 청킹·임베딩 설정마다 `index_version`이 달라 여러 인덱스가 한 DB에 공존합니다.
+
+**질의** (`POST /query`, JSON 또는 SSE)
+
+```mermaid
+flowchart LR
+    Q["질문"] --> R["검색 top-k"] --> G1{"검색 점수 충분"}
+    G1 -->|"예"| L["LLM 생성"] --> G2{"출처로 답 가능"}
+    G2 -->|"예"| V["인용 검증"] --> A["답변과 출처"]
+    G1 -->|"아니오"| N["응답 불가"]
+    G2 -->|"아니오"| N
+```
+
+질문을 임베딩해 코사인 유사도 top-k 청크를 찾습니다. top1 점수가 `MIN_SCORE` 미만이면 LLM을 부르지 않고 응답 불가를 돌려줍니다(게이트 1). GPT-5.6 Luna는 출처만으로 답하며 문장마다 `[n]`을 붙이고, 답할 수 없으면 `[[NO_ANSWER]]`를 내서 응답 불가가 됩니다(게이트 2). API, 웹 UI, 평가 하네스가 모두 이 같은 경로(`app/rag.py`)를 쓰기 때문에, 평가 결과가 실제 서비스 동작과 같습니다.
+
+**평가** (`python -m eval run`)
+
+```mermaid
+flowchart LR
+    G["골드셋"] --> R["질의 경로로 답변"] --> J["judge 판정"] --> S["규칙 채점"] --> P["리포트"]
+```
+
+골드셋 문항마다 위 질의 경로로 답변을 만들고(반복 가능), judge가 판정합니다(사실, 정답 값, 문장 근거, must_not, 함정 기준). 그 판정으로 0/1/2점과 실패 원인을 매기고 `report.md`, `summary.json`, `run.json`을 남깁니다.
 
 ### DB 스키마 (`app/db.py`)
 
