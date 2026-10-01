@@ -1,0 +1,15 @@
+
+# oh-my-harness
+.omh/state/
+.omh/loop/worktree/
+
+# python / uv
+.venv/
+__pycache__/
+.pytest_cache/
+
+# secrets
+.env
+
+# 과제 원문 PDF (Confidential, 공개 리포 금지)
+*Eval Harness*.pdf
