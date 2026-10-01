@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     judge_repeats: int = 2  # 같은 판정을 반복해 확률 평균 (PoC 흔들림 최대 0.09)
     tau_value: float = 0.5  # 정량 값 판정 문턱
     tau_fact: float = 0.3  # 정성 사실 포함 문턱 (PoC 잠정값, 사람 라벨로 보정 예정)
-    tau_must_not: float = 0.5
+    tau_must_not: float = 0.7  # 기준선 오탐 8건이 0.52~0.62 (near-miss 문장). 잠정값, 사람 라벨로 보정 예정
     tau_support: float = 0.5  # 답변 문장이 출처로 뒷받침되는가
     coverage_full: float = 0.75  # 정성 2점에 필요한 사실 커버율
 
