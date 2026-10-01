@@ -1,0 +1,15 @@
+{
+  "name": "mofe-md-draft",
+  "description": "eval/generate.py 초안 (2026년 하반기부터 이렇게 달라집니다.md): 정량 20, 정성 5, 답 없음·함정 10 - 사람 검토 전",
+  "documents": [
+    {
+      "id": "2026년 하반기부터 이렇게 달라집니다.md",
+      "sha256": "09bc1722bcdc73f3bde85199d7aa674c4ff596190732095ce660e268fd55cb96"
+    }
+  ],
+  "files": [
+    "quant.jsonl",
+    "qual.jsonl",
+    "neg.jsonl"
+  ]
+}
