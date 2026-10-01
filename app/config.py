@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     llm_reasoning_effort: Literal["none", "low", "medium", "high"] = "none"
     llm_temperature: float = 0.0
     llm_seed: int = 42
+    rag_prompt: Literal["v1", "v2"] = "v1"  # 생성 시스템 프롬프트 버전 (app/rag.py PROMPTS)
 
     top_k: int = 5
     min_score: float = 0.0  # 게이트1: top1 코사인 유사도가 이보다 낮으면 LLM 호출 없이 응답 불가. Part B에서 보정
