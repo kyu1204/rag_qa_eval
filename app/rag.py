@@ -113,6 +113,15 @@ def parse_citations(answer: str, hits: list[Hit]) -> tuple[str, list[dict], list
     return answer.strip(), citations, warnings
 
 
+def sampling_params(effort: str | None = None) -> dict:
+    """GPT-5.6 Luna는 reasoning_effort가 none이 아니면 temperature=0을 400으로 거부한다 (2026-10-01 실측)."""
+    effort = effort or settings.llm_reasoning_effort
+    params = {"reasoning_effort": effort, "seed": settings.llm_seed}
+    if effort == "none":
+        params["temperature"] = settings.llm_temperature
+    return params
+
+
 def llm() -> OpenAI:
     return OpenAI(base_url=settings.llm_base_url, api_key=settings.elice_api_key, timeout=90, max_retries=3)
 
@@ -138,11 +147,9 @@ def run(question: str, top_k: int | None = None, api: OpenAI | None = None) -> I
     stream = (api or llm()).chat.completions.create(
         model=settings.llm_model,
         messages=build_messages(question, hits),
-        reasoning_effort=settings.llm_reasoning_effort,
-        temperature=settings.llm_temperature,
-        seed=settings.llm_seed,
         stream=True,
         stream_options={"include_usage": True},
+        **sampling_params(),
     )
     text, usage, held = "", None, True
     for event in stream:
