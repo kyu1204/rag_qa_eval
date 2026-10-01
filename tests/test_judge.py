@@ -47,8 +47,9 @@ class FakeJev:
 def test_judge_record_averages_repeats():
     out = judge.judge_record(NEG, ANSWERED, FakeJev(), repeats=2)
     assert out["judge_tokens"] == 200
-    assert out["checks"]["s0"]["p"] == 0.4  # (0.2 + 0.6) / 2
-    assert out["checks"]["grade"]["choice"] == "2" and out["checks"]["grade"]["probabilities"]["2"] == 0.6
+    assert out["checks"]["s0"]["p"] == 0.4 and out["checks"]["s0"]["ps"] == [0.2, 0.6]  # 평균과 회차별 원값
+    grade = out["checks"]["grade"]
+    assert grade["choice"] == "2" and grade["probabilities"]["2"] == 0.6 and grade["choices"] == ["2", "2"]
 
 
 def test_judge_record_splits_large_requests(monkeypatch):
