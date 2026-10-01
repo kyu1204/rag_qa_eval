@@ -12,7 +12,7 @@ from rich.table import Table
 
 from app import rag
 from app.config import settings
-from eval.judge import TEMPLATE_VERSION
+from eval.judge import TEMPLATE_VERSION, judge_label
 from eval.scoring import GROUPS
 
 RUNS = Path("eval/runs")
@@ -45,7 +45,7 @@ def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, starte
         "index_chunks": chunks,
         "models": {"embed": settings.embed_model, "llm": settings.llm_model,
                    "llm_reasoning_effort": settings.llm_reasoning_effort, "llm_seed": settings.llm_seed,
-                   "rag_prompt": rag.PROMPT_VERSION, "judge": settings.judge_model, "judge_template": TEMPLATE_VERSION},
+                   "rag_prompt": rag.PROMPT_VERSION, "judge": judge_label(), "judge_template": TEMPLATE_VERSION},
         "repeats": repeats,
         "judge_repeats": settings.judge_repeats,
         "git": _git(),

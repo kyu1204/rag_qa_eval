@@ -1,0 +1,13 @@
+# Jev 키 없이 평가를 재현하는 judge 설정: Elice ML API의 Gemini 3.5 Flash-Lite에 Jev와 같은 판정 문구를 묻고,
+# 판정마다 3표를 받아 다수결(문턱 0.5)로 정한다. 엔드포인트는 .env의 JUDGE_LLM_BASE_URL, 키는 ELICE_API_KEY.
+#   uv run python -m eval run --exp llm-judge --repeats 3
+# 사람 라벨 149건과의 일치도(문턱 보정 없음): eval/poc/llm_judge_result.json
+[settings]
+judge_backend = "llm"
+judge_llm_model = "gemini-3.5-flash-lite"
+judge_repeats = 3
+tau_value = 0.5
+tau_fact = 0.5
+tau_must_not = 0.5
+tau_support = 0.5
+judge_price_usd = 0.30  # 정가 입력 단가 기준 추정. Elice 실제 단가는 다를 수 있다
