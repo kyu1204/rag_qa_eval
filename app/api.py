@@ -23,7 +23,7 @@ STATIC = Path(__file__).parent / "static"
 
 class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000, examples=["노란우산공제 납입한도가 얼마로 늘어나나요?"])
-    top_k: int = Field(default=settings.top_k, ge=1, le=20)
+    top_k: int = Field(default=settings.top_k, ge=1, le=50)
     stream: bool = False
     debug: bool = Field(default=False, description="true면 검색된 top-k 전체(retrieved)를 함께 돌려준다")
 
