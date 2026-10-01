@@ -17,13 +17,14 @@ class Settings(BaseSettings):
     embed_model: str = ""
     embed_dim: int = 1536
 
-    chunk_strategy: Literal["policy", "split"] = "policy"
+    extractor: Literal["generic", "policy_book"] = "generic"  # policy_book = 책자 전용 분석기
+    chunk_strategy: Literal["split", "policy"] = "split"  # policy는 policy_book 추출 결과 전용
     chunk_tokens: int = 500  # split 전략에서만 사용
     chunk_overlap: int = 75  # split 전략에서만 사용
 
     def index_version(self) -> str:
         """청킹·임베딩 설정의 지문. 설정이 바뀌면 다른 버전으로 적재·검색된다."""
-        params = {"chunker": self.chunk_strategy, "embed_model": self.embed_model, "embed_dim": self.embed_dim}
+        params = {"extractor": self.extractor, "chunker": self.chunk_strategy, "embed_model": self.embed_model, "embed_dim": self.embed_dim}
         if self.chunk_strategy == "split":
             params |= {"chunk_tokens": self.chunk_tokens, "chunk_overlap": self.chunk_overlap}
         return hashlib.sha1(json.dumps(params, sort_keys=True).encode()).hexdigest()[:8]
