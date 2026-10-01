@@ -24,11 +24,13 @@ from app.rag import llm, sampling_params
 
 CORPUS_PDF = Path("data/corpus/2026년 하반기부터 이렇게 달라집니다.pdf")
 OUT_DIR = Path("eval/gold")
-PROMPT_VERSION = "quant-v1"
+PROMPT_VERSION = "quant-v2"  # v1 대비: 시행일 질문 금지, 답의 완결성, 횟수 유형, 어휘 겹침 검사
 PROMPT = """아래는 정부 정책 안내 문서의 정책 1건이다. 이 정책에서 정답이 하나로 정해지는 사실 질문 1개를 만들어라.
 
 조건:
-- 정답은 금액, 비율, 인원, 기간, 날짜, 나이 같은 수치이거나, 대상 요건처럼 문서에 명시된 짧은 사실이다.
+- 정답은 금액, 비율, 인원, 횟수, 기간, 나이 같은 수치이거나, 대상 요건처럼 문서에 명시된 짧은 사실이다.
+- 시행일(언제부터 시행되는지)은 묻지 않는다. 모든 정책에 있어 쉽게 고를 수 있는 사실이라 문항이 그쪽으로 쏠린다.
+- answer는 질문에 대한 완결된 답이어야 한다. 질문이 넓으면(예: "누가 참여할 수 있나") answer가 조건 하나만 담지 않도록 질문을 좁혀라.
 - quote는 정답이 들어 있는 원문 구절을 글자 하나 바꾸지 말고 그대로 복사한다 (120자 이내).
 - answer는 30자 이내이고 quote 안에 그대로 들어 있어야 한다.
 - question_literal은 문서의 정책명과 표현을 그대로 써서 묻는다.
@@ -36,7 +38,7 @@ PROMPT = """아래는 정부 정책 안내 문서의 정책 1건이다. 이 정�
 - 질문만 보고도 어떤 정책인지 알 수 있어야 한다 (다른 정책과 헷갈리지 않게).
 
 JSON 객체 하나만 출력한다:
-{{"question_literal": "...", "question_user": "...", "answer": "...", "answer_kind": "금액|비율|인원|기간|날짜|나이|요건", "quote": "..."}}
+{{"question_literal": "...", "question_user": "...", "answer": "...", "answer_kind": "금액|비율|인원|횟수|기간|나이|요건", "quote": "..."}}
 
 [정책] {title} ({ministry})
 {text}"""
@@ -85,7 +87,15 @@ def verify(item: dict, page: Page) -> str | None:
         return "정답이 인용구에 없음"
     if norm(page.meta["title"]) in norm(item["question_user"]):
         return "user 질문이 정책명을 그대로 씀"
+    if title_overlap(page.meta["title"], item["question_user"]) >= 0.5:
+        return "user 질문이 정책명 어휘를 절반 이상 재사용"
     return None
+
+
+def title_overlap(title: str, question: str) -> float:
+    """정책명의 2글자 이상 어절 중 질문에 그대로 나오는 비율 (사용자 말투 변형이 제대로 됐는지)."""
+    words = [w for w in re.findall(r"[\w·]+", title) if len(w) >= 2]
+    return sum(w in question for w in words) / len(words) if words else 0.0
 
 
 def main() -> None:
