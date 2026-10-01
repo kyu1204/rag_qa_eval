@@ -113,12 +113,13 @@ class Jev:
 
 
 def judge_record(item: dict, record: dict, client: Jev, repeats: int) -> dict:
-    """판정 결과: {판정 id: {"kind", "target", "p"}} (grade는 "choice", "probabilities"). 반복 평균."""
+    """판정 결과: {판정 id: {"kind", "target", "p", "ps"}} (grade는 "choice", "probabilities", "choices").
+    p는 반복 평균, ps·choices는 회차별 원값 (judge 일관성 측정용)."""
     state, checks = build_checks(item, record)
     if not checks:
         return {"checks": {}, "judge_tokens": 0}
     ids = list(checks)
-    sums: dict[str, dict | float] = {}
+    runs: dict[str, list] = {cid: [] for cid in ids}  # 회차별 noul 확률 또는 choice 확률 분포
     tokens = 0
     for _ in range(repeats):
         for start in range(0, len(ids), MAX_QUESTIONS):
@@ -126,19 +127,17 @@ def judge_record(item: dict, record: dict, client: Jev, repeats: int) -> dict:
             answers, used = client.ask(state, batch)
             tokens += used
             for cid, answer in answers.items():
-                if checks[cid][0] == "grade":
-                    acc = sums.setdefault(cid, {})
-                    for key, prob in answer["probabilities"].items():
-                        acc[key] = acc.get(key, 0.0) + prob
-                else:
-                    sums[cid] = sums.get(cid, 0.0) + answer["noul"]
+                runs[cid].append(answer["probabilities"] if checks[cid][0] == "grade" else answer["noul"])
     out = {}
     for cid, (kind, target) in checks.items():
         if kind == "grade":
-            probs = {k: round(v / repeats, 4) for k, v in sums[cid].items()}
-            out[cid] = {"kind": kind, "choice": max(probs, key=probs.get), "probabilities": probs}
+            keys = {k for dist in runs[cid] for k in dist}
+            probs = {k: round(sum(d.get(k, 0.0) for d in runs[cid]) / repeats, 4) for k in keys}
+            out[cid] = {"kind": kind, "choice": max(probs, key=probs.get), "probabilities": probs,
+                        "choices": [max(d, key=d.get) for d in runs[cid]]}
         else:
-            out[cid] = {"kind": kind, "target": target, "p": round(sums[cid] / repeats, 4)}
+            out[cid] = {"kind": kind, "target": target, "p": round(sum(runs[cid]) / repeats, 4),
+                        "ps": [round(x, 4) for x in runs[cid]]}
     return {"checks": out, "judge_tokens": tokens}
 
 

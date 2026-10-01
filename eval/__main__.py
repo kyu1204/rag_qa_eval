@@ -3,6 +3,7 @@
     uv run python -m eval run [--name NAME] [--set KEY=VALUE ...] [--exp NAME] [--repeats N] [--limit N]
     uv run python -m eval compare <run A 디렉터리> <run B 디렉터리>
     uv run python -m eval rescore <run 디렉터리> [--set TAU_FACT=0.25 ...]
+    uv run python -m eval rejudge <run 디렉터리> [--set JUDGE_REPEATS=3 ...]
     uv run python -m eval label-sheet <run 디렉터리>
     uv run python -m eval calibrate <채운 라벨링 시트>
 """
@@ -65,19 +66,44 @@ def _load_run(path: Path) -> tuple[dict, list[dict], dict]:
     return info, records, json.loads((path / "summary.json").read_text())
 
 
+def _gold_items(info: dict) -> dict[str, dict]:
+    """실행 당시 골드셋을 다시 읽는다. 그 사이 바뀌었으면 경고 (판정·채점이 새 골드셋 기준이 된다)."""
+    gold = load(info["gold"]["path"])
+    if gold.hash != info["gold"]["hash"]:
+        report.console.print(f"[yellow]경고: 골드셋이 실행 당시({info['gold']['hash']})와 다르다({gold.hash})[/]")
+    return {item["id"]: item for item in gold.items}
+
+
 def cmd_rescore(args) -> int:
     """저장된 답변·판정 확률로 채점만 다시 한다 (문턱 보정 등). 결과는 새 실행 디렉터리로."""
     src = Path(args.run)
     info, records, _ = _load_run(src)
     overrides = parse_overrides(args.set, None)
     with runner.overridden(info["overrides"] | overrides):
-        gold = load(info["gold"]["path"])
-        if gold.hash != info["gold"]["hash"]:
-            report.console.print(f"[yellow]경고: 골드셋이 실행 당시({info['gold']['hash']})와 다르다({gold.hash})[/]")
-        items_by_id = {item["id"]: item for item in gold.items}
+        items_by_id = _gold_items(info)
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rescored", "rescored_from": str(src), "rescore_overrides": overrides,
-                       "settings": {k: v for k, v in runner.settings.model_dump().items() if k not in report.SECRET_FIELDS}}
+                       "settings": report.public_settings()}
+    path = report.save(info["name"], info, records, summary)
+    report.print_summary(summary, path)
+    return 0
+
+
+def cmd_rejudge(args) -> int:
+    """저장된 답변은 그대로 두고 judge만 다시 돌린다 (judge 설정·템플릿·반복 횟수를 바꿨을 때)."""
+    src = Path(args.run)
+    info, records, _ = _load_run(src)
+    overrides = parse_overrides(args.set, None)
+    with runner.overridden(info["overrides"] | overrides):
+        items_by_id = _gold_items(info)
+        for record in records:
+            record.pop("judge", None)
+            record.pop("result", None)
+        judge.judge_all(items_by_id, [r for r in records if r["status"] != "error"])
+        summary = scoring.score_all(items_by_id, records)
+        info = info | {"name": f"{info['name']}_rejudged", "rejudged_from": str(src), "rejudge_overrides": overrides,
+                       "judge_repeats": runner.settings.judge_repeats, "settings": report.public_settings(),
+                       "models": info["models"] | {"judge": runner.settings.judge_model, "judge_template": judge.TEMPLATE_VERSION}}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
     return 0
@@ -97,7 +123,7 @@ def cmd_compare(args) -> int:
     lines = [f"# 비교: {info_a['name']} -> {info_b['name']}", ""]
     if info_a["gold"]["hash"] != info_b["gold"]["hash"]:
         lines += ["**경고: 두 실행의 골드셋이 다르다. 비교가 성립하지 않을 수 있다.**", ""]
-    label = lambda info: (info["overrides"] | info.get("rescore_overrides", {})) or "없음"  # noqa: E731
+    label = lambda info: (info["overrides"] | info.get("rescore_overrides", {}) | info.get("rejudge_overrides", {})) or "없음"  # noqa: E731
     lines += [f"- 덮어쓴 설정: {label(info_a)} -> {label(info_b)}",
               f"- index: {info_a['index_version']} -> {info_b['index_version']}", "",
               "| 묶음 | 안전성 | 유용성 |", "|---|---|---|"]
@@ -156,11 +182,14 @@ def main(argv: list[str] | None = None) -> int:
     sheet.add_argument("run")
     sheet.add_argument("--repeat", type=int, default=0)
     sheet.add_argument("--support", type=int, default=30, help="문장 근거 표본 수")
+    rejudge = sub.add_parser("rejudge", help="저장된 답변으로 judge만 다시 (답변 고정)")
+    rejudge.add_argument("run")
+    rejudge.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
     calib = sub.add_parser("calibrate", help="채운 라벨링 시트로 judge 일치도와 추천 문턱 계산")
     calib.add_argument("sheet")
     args = parser.parse_args(argv)
     commands = {"run": cmd_run, "rescore": cmd_rescore, "compare": cmd_compare, "label-sheet": cmd_label_sheet,
-                "calibrate": cmd_calibrate}
+                "calibrate": cmd_calibrate, "rejudge": cmd_rejudge}
     return commands[args.command](args)
 
 

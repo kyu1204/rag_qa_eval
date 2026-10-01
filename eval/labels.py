@@ -7,6 +7,7 @@
 키(qual-02#f0_0)로 run의 items.jsonl과 짝을 지어 calibrate가 읽는다.
 """
 
+import html
 import json
 import random
 import re
@@ -34,6 +35,17 @@ def _cell(text: str) -> str:
 
 def _quote(text: str) -> list[str]:
     return [f"> {line}" if line.strip() else ">" for line in text.splitlines()]
+
+
+def _sources(retrieved: list[dict]) -> str:
+    """출처 접기를 빈 줄 없는 HTML 블록 하나로 만든다. 빈 줄이 끼면 Obsidian처럼 블록 단위로 그리는 뷰어에서
+    <details>가 거기서 끝나 출처가 접힘 밖에 인용문으로 펼쳐진다. | 는 판정 행으로 읽히지 않게 바꾼다."""
+    parts = [f"<details><summary>출처 펼치기 ({len(retrieved)}개)</summary>"]
+    for h in retrieved:
+        where = f"p.{h['page_start']}-{h['page_end']}" if h.get("page_start") is not None else h["document_id"]
+        text = html.escape(h["content"]).replace("|", "&#124;")
+        parts.append(f"<p><b>[{h['ref']}] {html.escape(where)}</b><br>\n" + "<br>\n".join(text.splitlines()) + "</p>")
+    return "\n".join(parts + ["</details>"])
 
 
 def make_sheet(run: Path, repeat: int = 0, support_n: int = 30, seed: int = 7) -> Path:
@@ -91,10 +103,7 @@ def make_sheet(run: Path, repeat: int = 0, support_n: int = 30, seed: int = 7) -
         group = [s for s in picked if s[1]["id"] == rid]
         r = group[0][1]
         lines += [f"### {rid}", "", f"**질문** {r['question']}", "", "**답변**", "", *_quote(r["answer"]), "",
-                  "<details><summary>출처 펼치기</summary>", ""]
-        for h in r["retrieved"]:
-            lines += [f"**[{h['ref']}] PDF p.{h['page_start']}-{h['page_end']}**", "", *_quote(h["content"]), ""]
-        lines += ["</details>", "", "| 키 | 문장 | 판정 | 메모 |", "|---|---|---|---|"]
+                  _sources(r["retrieved"]), "", "| 키 | 문장 | 판정 | 메모 |", "|---|---|---|---|"]
         lines += [f"| {rid}#{cid} | {_cell(text)} |  |  |" for _, _, cid, text in group]
         lines.append("")
     counts["문장 근거"] = len(picked)

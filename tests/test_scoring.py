@@ -77,3 +77,17 @@ def test_summarize_groups_and_repeat_ranges():
     assert summary["groups"]["정량"]["safety"] == 0.5 and summary["groups"]["정량"]["safety_range"] == [0.0, 1.0]
     assert summary["groups"]["전체"]["dist"] == {"0": 1, "1": 0, "2": 2}
     assert summary["diagnostics"]["abstention_accuracy"] == 1.0 and summary["causes"] == {"환각": 1}
+
+
+def test_judge_consistency_counts_flips_at_threshold(monkeypatch):
+    from app.config import settings
+    from eval.scoring import judge_consistency
+    monkeypatch.setattr(settings, "tau_fact", 0.3)
+    records = [{"judge": {"checks": {
+        "f0_0": {"kind": "fact", "ps": [0.25, 0.35]},  # 문턱 0.3을 넘나듦 -> 뒤집힘
+        "f0_1": {"kind": "fact", "ps": [0.9, 0.8]},
+        "grade": {"kind": "grade", "choices": ["2", "1"]},
+    }}}]
+    out = judge_consistency(records)
+    assert out["fact"] == {"n": 2, "flip_rate": 0.5, "mean_diff": 0.1, "max_diff": 0.1}
+    assert out["grade"]["flip_rate"] == 1.0

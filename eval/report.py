@@ -25,6 +25,11 @@ def _git() -> dict:
     return {"sha": run("rev-parse", "--short", "HEAD"), "dirty": bool(run("status", "--porcelain"))}
 
 
+def public_settings() -> dict:
+    """기록용 설정 덤프 (키·접속 문자열 제외)."""
+    return {k: v for k, v in settings.model_dump().items() if k not in SECRET_FIELDS}
+
+
 def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, started: datetime) -> dict:
     """재현에 필요한 모든 것: 설정·인덱스·모델 버전·골드셋/문서 해시·git·반복 횟수."""
     lock = Path("uv.lock")
@@ -35,7 +40,7 @@ def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, starte
         "gold": {"name": gold.name, "path": str(gold.path), "hash": gold.hash, "items": len(gold.items)},
         "documents": gold.documents,
         "overrides": overrides,
-        "settings": {k: v for k, v in settings.model_dump().items() if k not in SECRET_FIELDS},
+        "settings": public_settings(),
         "index_version": settings.index_version(),
         "index_chunks": chunks,
         "models": {"embed": settings.embed_model, "llm": settings.llm_model,
@@ -132,6 +137,17 @@ def markdown(info: dict, records: list[dict], summary: dict) -> str:
                      f"{g['dist']['2']} | {g['errors']} |")
     lines += ["", "## 진단 지표", "", "| 지표 | 값 |", "|---|---|"]
     lines += [f"| {label} | {fmt(summary['diagnostics'][key])} |" for key, (label, fmt) in DIAG_LABELS.items()]
+    lines += ["", "## judge 일관성", "",
+              f"같은 판정을 {info['judge_repeats']}회 반복한 흔들림. 뒤집힘 = 회차에 따라 문턱 기준 예/아니오가 달라진 비율.", ""]
+    consistency = summary.get("judge_consistency") or {}
+    if consistency:
+        lines += ["| 판정 | 수 | 판정 뒤집힘 | 확률 차이 평균 | 최대 |", "|---|---|---|---|---|"]
+        for kind, c in consistency.items():
+            mean_diff = "-" if c["mean_diff"] is None else f"{c['mean_diff']:.3f}"
+            max_diff = "-" if c["max_diff"] is None else f"{c['max_diff']:.3f}"
+            lines.append(f"| {kind} | {c['n']} | {_pct(c['flip_rate'])} | {mean_diff} | {max_diff} |")
+    else:
+        lines.append("- 기록 없음 (회차별 확률을 저장하기 전의 실행이거나 judge 반복 1회)")
     lines += ["", "## 실패 원인", ""]
     lines += [f"- {cause}: {n}건" for cause, n in summary["causes"].items()] or ["- 없음"]
     failures = [r for r in records if r["result"]["score"] is None or r["result"]["score"] < 2]
