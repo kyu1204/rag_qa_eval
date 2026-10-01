@@ -66,16 +66,21 @@ def _load_run(path: Path) -> tuple[dict, list[dict], dict]:
     return info, records, json.loads((path / "summary.json").read_text())
 
 
+def _gold_items(info: dict) -> dict[str, dict]:
+    """실행 당시 골드셋을 다시 읽는다. 그 사이 바뀌었으면 경고 (판정·채점이 새 골드셋 기준이 된다)."""
+    gold = load(info["gold"]["path"])
+    if gold.hash != info["gold"]["hash"]:
+        report.console.print(f"[yellow]경고: 골드셋이 실행 당시({info['gold']['hash']})와 다르다({gold.hash})[/]")
+    return {item["id"]: item for item in gold.items}
+
+
 def cmd_rescore(args) -> int:
     """저장된 답변·판정 확률로 채점만 다시 한다 (문턱 보정 등). 결과는 새 실행 디렉터리로."""
     src = Path(args.run)
     info, records, _ = _load_run(src)
     overrides = parse_overrides(args.set, None)
     with runner.overridden(info["overrides"] | overrides):
-        gold = load(info["gold"]["path"])
-        if gold.hash != info["gold"]["hash"]:
-            report.console.print(f"[yellow]경고: 골드셋이 실행 당시({info['gold']['hash']})와 다르다({gold.hash})[/]")
-        items_by_id = {item["id"]: item for item in gold.items}
+        items_by_id = _gold_items(info)
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rescored", "rescored_from": str(src), "rescore_overrides": overrides,
                        "settings": report.public_settings()}
@@ -90,8 +95,7 @@ def cmd_rejudge(args) -> int:
     info, records, _ = _load_run(src)
     overrides = parse_overrides(args.set, None)
     with runner.overridden(info["overrides"] | overrides):
-        gold = load(info["gold"]["path"])
-        items_by_id = {item["id"]: item for item in gold.items}
+        items_by_id = _gold_items(info)
         for record in records:
             record.pop("judge", None)
             record.pop("result", None)
