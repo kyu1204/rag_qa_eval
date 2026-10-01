@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Citation RAG QA service and eval harness over a Korean public policy corpus"
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.142.2",
     "openai>=3.22.1",
     "pgvector>=0.5.0",
     "psycopg[binary]>=3.3.6",
@@ -11,6 +12,7 @@ dependencies = [
     "pymupdf>=1.28.2",
     "rich>=15.0.0",
     "tiktoken>=0.14.0",
+    "uvicorn[standard]>=0.54.0",
 ]
 
 [dependency-groups]
