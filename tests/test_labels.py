@@ -29,7 +29,7 @@ def _setup(tmp_path, monkeypatch):
         "m0": {"kind": "must_not", "p": 0.6}, "s0": {"kind": "support", "p": 0.95}}
     records = [
         {"id": "s1", "repeat": 0, "status": "answered", "type": "qual", "group": "정성", "question": "정리해줘",
-         "answer": "가, 다를 받습니다.", "retrieved": [{"ref": 1, "page_start": 1, "page_end": 1, "content": "출처"}],
+         "answer": "가, 다를 받습니다.", "retrieved": [{"ref": 1, "page_start": 1, "page_end": 1, "content": "<출처> | 표\n\n둘째 줄"}],
          "judge": {"checks": checks}},
         {"id": "q1", "repeat": 0, "status": "answered", "type": "quant", "group": "정량", "question": "얼마?",
          "answer": "10원입니다.", "retrieved": [], "judge": {"checks": {"value": {"kind": "value", "p": 0.97}}}},
@@ -50,6 +50,8 @@ def test_sheet_roundtrip_and_calibration(tmp_path, monkeypatch):
     sheet = labels.make_sheet(run, support_n=5)
     assert "가 \\| 나" in sheet.read_text()  # 표 안의 | 는 이스케이프
     assert "0.9" not in sheet.read_text()  # judge 확률은 시트에 없다
+    fold = sheet.read_text().split("<details>")[1].split("</details>")[0]
+    assert "\n\n" not in fold and "&lt;출처&gt; &#124; 표" in fold  # 접힘이 한 HTML 블록, 내용은 이스케이프
     # 사람: 가·다는 있음(O), 라·마는 없음, 틀린 말은 안 함(X), 정량 값 맞음
     _fill(sheet, {"s1#f0_0": "O", "s1#f0_1": "O", "s1#f0_2": "X", "s1#f0_3": "x",
                   "s1#m0": "X", "s1#s0": "?", "q1#value": "O"})
