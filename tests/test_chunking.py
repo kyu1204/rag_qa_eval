@@ -1,4 +1,6 @@
-from app.chunking import _pieces, n_tokens, split_chunks
+import pytest
+
+from app.chunking import _pieces, n_tokens, policy_chunks, split_chunks
 from app.extract import Page, extract_generic
 
 
@@ -34,5 +36,18 @@ def test_split_chunks_text_without_pages():
 
 
 def test_generic_extract_text_strips_bom_and_normalizes():
-    pages = extract_generic("﻿정책\x07 안내".encode(), "text")
+    pages = extract_generic("\ufeff정책\x07 안내".encode(), "text")
     assert [(p.page, p.text) for p in pages] == [(None, "정책 안내")]
+
+
+def test_policy_chunks_one_per_policy_with_header():
+    meta = {"chapter": "제1장 금융·재정·조세", "ministry": "기획예산처", "title": "모두의 재정 구축"}
+    chunks = policy_chunks([Page(60, "추진배경: ...", meta), Page(61, "추진배경: ...", meta)])
+    assert [(c.ord, c.page_start, c.page_end) for c in chunks] == [(0, 60, 60), (1, 61, 61)]
+    assert chunks[0].embed_text.startswith("모두의 재정 구축 (기획예산처, 제1장 금융·재정·조세)\n")
+    assert chunks[0].meta["heading"] == "제1장 금융·재정·조세 > 기획예산처 > 모두의 재정 구축"
+
+
+def test_policy_chunks_require_policy_book_pages():
+    with pytest.raises(ValueError):
+        policy_chunks([Page(1, "본문")])
