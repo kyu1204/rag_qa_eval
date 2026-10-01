@@ -77,7 +77,7 @@ def cmd_rescore(args) -> int:
         items_by_id = {item["id"]: item for item in gold.items}
         summary = scoring.score_all(items_by_id, records)
         info = info | {"name": f"{info['name']}_rescored", "rescored_from": str(src), "rescore_overrides": overrides,
-                       "settings": {k: v for k, v in runner.settings.model_dump().items() if k not in report.SECRET_FIELDS}}
+                       "settings": report.public_settings()}
     path = report.save(info["name"], info, records, summary)
     report.print_summary(summary, path)
     return 0

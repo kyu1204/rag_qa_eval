@@ -25,6 +25,11 @@ def _git() -> dict:
     return {"sha": run("rev-parse", "--short", "HEAD"), "dirty": bool(run("status", "--porcelain"))}
 
 
+def public_settings() -> dict:
+    """기록용 설정 덤프 (키·접속 문자열 제외)."""
+    return {k: v for k, v in settings.model_dump().items() if k not in SECRET_FIELDS}
+
+
 def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, started: datetime) -> dict:
     """재현에 필요한 모든 것: 설정·인덱스·모델 버전·골드셋/문서 해시·git·반복 횟수."""
     lock = Path("uv.lock")
@@ -35,7 +40,7 @@ def run_info(name: str, gold, overrides: dict, repeats: int, chunks: int, starte
         "gold": {"name": gold.name, "path": str(gold.path), "hash": gold.hash, "items": len(gold.items)},
         "documents": gold.documents,
         "overrides": overrides,
-        "settings": {k: v for k, v in settings.model_dump().items() if k not in SECRET_FIELDS},
+        "settings": public_settings(),
         "index_version": settings.index_version(),
         "index_chunks": chunks,
         "models": {"embed": settings.embed_model, "llm": settings.llm_model,
