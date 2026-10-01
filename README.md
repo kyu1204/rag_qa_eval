@@ -829,11 +829,13 @@ app/                  RAG 서비스
   api.py, static/     FastAPI (JSON, SSE)와 웹 UI
 eval/                 평가 하네스 (python -m eval ...)
   goldset.py, runner.py, judge.py, scoring.py, report.py, labels.py, generate.py, atomize.py
+  retrieval.py        검색만 따로 재는 top-k 곡선 (python -m eval.retrieval)
+  experiments/        Part C 실험 설정 묶음 (--exp <이름>)
   gold/               골드셋 43문항과 생성·검토 기록
   gold_drafts/        생성기로 만든 초안 예시 (검토 전)
   labels/             사람 라벨 시트와 보정 결과
   runs/               이 문서에서 인용한 평가 실행 기록
-  poc/                Jev 한국어 judge PoC
+  poc/                Jev 한국어 judge PoC, Gemini 대안 judge PoC
 data/                 코퍼스 원본(PDF, MD)과 출처
 tests/                단위 테스트
 .env.example          환경 변수 예시 (cp .env.example .env 후 키를 채움)
