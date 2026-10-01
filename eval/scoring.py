@@ -175,6 +175,31 @@ def summarize(items_by_id: dict[str, dict], records: list[dict]) -> dict:
         if cause := r["result"]["cause"]:
             causes[cause] = causes.get(cause, 0) + 1
     out["causes"] = dict(sorted(causes.items(), key=lambda kv: -kv[1]))
+    out["judge_consistency"] = judge_consistency(records)
+    return out
+
+
+TAU_BY_KIND = {"value": "tau_value", "fact": "tau_fact", "must_not": "tau_must_not", "support": "tau_support"}
+
+
+def judge_consistency(records: list[dict]) -> dict:
+    """같은 판정을 반복했을 때 확률이 얼마나 흔들리고, 문턱 기준 판정이 몇 % 뒤집히는가 (판정 종류별)."""
+    acc: dict[str, dict[str, list]] = {}
+    for r in records:
+        for check in r.get("judge", {}).get("checks", {}).values():
+            kind = check["kind"]
+            slot = acc.setdefault(kind, {"diffs": [], "flips": []})
+            if kind == "grade" and len(check.get("choices", [])) >= 2:
+                slot["flips"].append(len(set(check["choices"])) > 1)
+            elif len(check.get("ps", [])) >= 2:
+                ps, tau = check["ps"], getattr(settings, TAU_BY_KIND[kind])
+                slot["diffs"].append(max(ps) - min(ps))
+                slot["flips"].append(any(x >= tau for x in ps) and any(x < tau for x in ps))
+    out = {}
+    for kind, slot in acc.items():
+        if slot["flips"]:
+            out[kind] = {"n": len(slot["flips"]), "flip_rate": _share(slot["flips"]),
+                         "mean_diff": _mean(slot["diffs"]), "max_diff": round(max(slot["diffs"]), 4) if slot["diffs"] else None}
     return out
 
 
