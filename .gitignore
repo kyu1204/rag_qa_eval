@@ -13,3 +13,6 @@ __pycache__/
 
 # 과제 원문 PDF (Confidential, 공개 리포 금지)
 *Eval Harness*.pdf
+
+# macOS
+.DS_Store
