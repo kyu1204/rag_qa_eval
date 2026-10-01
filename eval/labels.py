@@ -18,14 +18,15 @@ from eval.goldset import load
 
 LABELS = Path("eval/labels")
 GUIDE = """- 대상 실행: `{run}` (반복 번호 {repeat}의 답변)
-- 각 표의 **판정** 칸에 `O`(예) 또는 `X`(아니오)를 적는다. 판단이 정말 어려우면 `?`와 메모. 함정 기준은 `2`/`1`/`0`.
-- judge 확률은 일부러 싣지 않았다. 다른 칸은 고치지 않는다 (키로 결과와 짝을 짓는다).
+- **판정은 좋다/나쁘다가 아니라, 아래 질문에 대한 예(`O`)/아니오(`X`)다.** 그래서 잘못된 내용 칸은 정상 답변이면 `X`다.
+  판단이 정말 어려우면 `?`와 메모. 함정 기준만 숫자 `2`/`1`/`0`. 다른 값은 calibrate가 오류로 멈춘다.
+- judge 확률은 일부러 싣지 않았다. 판정·메모 말고 다른 칸은 고치지 않는다 (키로 결과와 짝을 짓는다). 표 칸 정렬은 바뀌어도 된다.
 - 판정 기준 (judge 지시문과 같은 기준):
-  - **사실**: 답변에 이 사실이 표현은 달라도 들어 있으면 O. 사실의 일부만 있으면 X.
-  - **잘못된 내용**: 답변이 이 잘못된 내용을 사실처럼 말하면 O. (맞는 내용을 말했으면 X)
-  - **정답 값**: 답변이 이 값을 질문의 답으로 말하면 O. 표기만 다른 같은 값은 O.
-  - **함정 기준**: 답변에 가장 잘 맞는 기준 번호.
-  - **문장 근거**: 이 문장의 사실 주장이 출처로 완전히 뒷받침되면 O. 숫자·날짜·조건이 하나라도 다르면 X. 사실 주장이 없는 안내 문장은 O.
+  - **사실**: 답변에 이 사실이 있나? 표현이 달라도 있으면 O, 사실의 일부만 있으면 X.
+  - **잘못된 내용**: 답변이 이 틀린 말을 하나? 하면 O(위반), 안 하면(정상 답변) X.
+  - **정답 값**: 답변이 이 값을 질문의 답으로 말하나? 표기만 다른 같은 값도 O.
+  - **함정 기준**: 답변에 가장 잘 맞는 기준 번호 2/1/0 (O/X가 아니다).
+  - **문장 근거**: 답변 맥락에서 이 문장의 사실 주장이 출처로 완전히 뒷받침되나? 숫자·날짜·조건이 하나라도 다르면 X. 사실 주장이 없는 안내 문장은 O.
 """
 
 
@@ -64,15 +65,15 @@ def make_sheet(run: Path, repeat: int = 0, support_n: int = 30, seed: int = 7) -
                   "| 키 | 종류 | 확인할 내용 | 판정 | 메모 |", "|---|---|---|---|---|"]
         for pi, point in enumerate(item["must_include"]):
             for fi, fact in enumerate(point["facts"]):
-                lines.append(f"| {r['id']}#f{pi}_{fi} | 사실 | {_cell(fact)} |  |  |")
+                lines.append(f"| {r['id']}#f{pi}_{fi} | 사실 (O=있음) | {_cell(fact)} |  |  |")
                 counts["사실"] = counts.get("사실", 0) + 1
         for mi, wrong in enumerate(item.get("must_not", [])):
-            lines.append(f"| {r['id']}#m{mi} | 잘못된 내용 | {_cell(strip_explanation(wrong))} |  |  |")
+            lines.append(f"| {r['id']}#m{mi} | 잘못된 내용 (O=위반) | {_cell(strip_explanation(wrong))} |  |  |")
             counts["잘못된 내용"] = counts.get("잘못된 내용", 0) + 1
         lines.append("")
 
     quant = [r for r in records if r["type"] == "quant"]
-    lines += ["## 2. 정량 답변: 정답 값", "", "| 키 | 질문 | 답변 | 정답 값 | 판정 | 메모 |", "|---|---|---|---|---|---|"]
+    lines += ["## 2. 정량 답변: 정답 값", "", "| 키 | 질문 | 답변 | 정답 값 | 판정 (O=이 값을 답함) | 메모 |", "|---|---|---|---|---|---|"]
     for r in quant:
         lines.append(f"| {r['id']}#value | {_cell(r['question'])} | {_cell(r['answer'])} | {_cell(gold[r['id']]['answer'])} |  |  |")
     counts["정답 값"] = len(quant)
@@ -84,7 +85,7 @@ def make_sheet(run: Path, repeat: int = 0, support_n: int = 30, seed: int = 7) -
         criteria = gold[r["id"]]["scoring"]
         lines += [f"### {r['id']}", "", f"**질문** {r['question']}", "", "**답변**", "", *_quote(r["answer"]), "",
                   *[f"- **{k}**: {criteria[k]}" for k in ("2", "1", "0") if k in criteria], "",
-                  "| 키 | 판정 | 메모 |", "|---|---|---|", f"| {r['id']}#grade |  |  |", ""]
+                  "| 키 | 판정 (2/1/0) | 메모 |", "|---|---|---|", f"| {r['id']}#grade |  |  |", ""]
     counts["함정 기준"] = len(traps)
 
     # 문장 근거: 확률이 낮은 문장은 모두, 나머지는 무작위로 채운다 (judge의 관대함도 보려고)
@@ -103,7 +104,7 @@ def make_sheet(run: Path, repeat: int = 0, support_n: int = 30, seed: int = 7) -
         group = [s for s in picked if s[1]["id"] == rid]
         r = group[0][1]
         lines += [f"### {rid}", "", f"**질문** {r['question']}", "", "**답변**", "", *_quote(r["answer"]), "",
-                  _sources(r["retrieved"]), "", "| 키 | 문장 | 판정 | 메모 |", "|---|---|---|---|"]
+                  _sources(r["retrieved"]), "", "| 키 | 문장 | 판정 (O=근거 있음) | 메모 |", "|---|---|---|---|"]
         lines += [f"| {rid}#{cid} | {_cell(text)} |  |  |" for _, _, cid, text in group]
         lines.append("")
     counts["문장 근거"] = len(picked)
@@ -129,6 +130,10 @@ def read_sheet(path: Path) -> tuple[str, dict[str, tuple[str, str]]]:
         verdict, memo = cells[-2].upper(), cells[-1]
         if verdict:
             labels[cells[0]] = (verdict, memo)
+    # 규칙 밖의 값(함정에 O 등)을 조용히 다른 뜻으로 세지 않게 여기서 멈춘다
+    bad = [f"{key}={v}" for key, (v, _) in labels.items() if v not in ({"2", "1", "0"} if key.endswith("#grade") else {"O", "X", "?"})]
+    if bad:
+        raise ValueError("허용되지 않는 판정 (함정 기준은 2/1/0, 나머지는 O/X/?): " + ", ".join(bad))
     return run, labels
 
 

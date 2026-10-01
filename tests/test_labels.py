@@ -73,3 +73,11 @@ def test_sheet_roundtrip_and_calibration(tmp_path, monkeypatch):
 @pytest.mark.parametrize("pairs, expected", [([(True, True), (False, False)], 1.0), ([(True, False), (False, True)], -1.0)])
 def test_kappa(pairs, expected):
     assert labels._kappa(pairs) == expected
+
+
+def test_sheet_spells_out_verdicts_and_rejects_other_values(tmp_path, monkeypatch):
+    sheet = labels.make_sheet(_setup(tmp_path, monkeypatch), support_n=5)
+    assert "| s1#m0 | 잘못된 내용 (O=위반) |" in sheet.read_text()  # 정상 답변을 O로 적는 혼동 방지
+    _fill(sheet, {"q1#value": "2"})  # 함정 기준 숫자를 다른 칸에
+    with pytest.raises(ValueError, match="q1#value=2"):
+        labels.read_sheet(sheet)
